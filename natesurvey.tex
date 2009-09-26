@@ -30,6 +30,7 @@ Charles O. Hartman suggests a simple explanations for this glacial trend: the
 intersection of programmers and poets has historically been rather small
 \cite{Hart96}. Thus, while architectures and programming languages have changed
 drastically the fundamental techniques, algorithms, and motivations have not.
+
 \subsection{History} 
 Computer poetry traces its roots back to 1962 with the authorship of a program
 called Auto-Beatnik. The software took in grammatical structures and vocabulary
@@ -39,7 +40,7 @@ a work by the program RACTER called \emph{The Policeman's Beard is Half-
 Constructed}. At 66 pages, \emph{Policeman's Beard} was a much larger effort
 than the handful of short poems output by Auto-Beatnik. However, the generation
 process was essentially the same idea: the program called upon built-in grammatical
-rules and a large vocabulary of english words \cite{Chamb84}. 
+templates and a large vocabulary of english words \cite{Chamb84}. 
 
 In the same year appeared the Travesty Generator, written by literary scholar
 Hugh Kenner and computer scientist Joseph O'Rourke. Distinct from its
@@ -51,7 +52,23 @@ letters of $t$; but at about $n = 9$, $t$ begins to resemble a grammatically
 correct rearrangment of the phrases in $s$ \cite{Hart96}. Thus, for varying
 levels of $n$, new poetry could be produced from any input and this basic
 algorithm without the need for any kind of external lexicon.
-\subsection{Motivation}
+
+\subsection{Two Categories}
+Auto-Beatnik and RACTER represent major seminal instances of one of the two
+major categories of computer poetry that we are left with today. This category,
+which I will refer to as \emph{Templatized} computer poetry, contains software
+that relies on grammatical templates and a large vocabulary to create new
+works. The software is essentially fed (or, in the case of the Prose system
+discussed below, generating) sentences with blanks to fill in using a
+dictionary.
+
+The other category, which I will refer to as \emph{Generative}, contains
+software which, like the Travesty Engine, relies only on input and an algorithm
+to produce its work. At its simplest this category would include a basic
+software designed only to, say, shuffle the characters or words in its input
+but scales up to grammatical natural language generation in conversation with a
+human user.
+
 \section{Method 1}
 \section{Method 2}
 \section{Conclusion}
