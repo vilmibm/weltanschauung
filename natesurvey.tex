@@ -24,8 +24,33 @@ paper will evaluate the extent to which computer poetry can evolve through the
 utilization of Internet-based corpora.
 \end{abstract}
 
-\section{Introduction}
-\subsection{History}
+\section{Introduction} 
+The evolution and proliferation of computer poetry has been sluggish at best.
+Charles O. Hartman suggests a simple explanations for this glacial trend: the
+intersection of programmers and poets has historically been rather small
+\cite{Hart96}. Thus, while architectures and programming languages have changed
+drastically the fundamental techniques, algorithms, and motivations have not.
+\subsection{History} 
+Computer poetry traces its roots back to 1962 with the authorship of a program
+called Auto-Beatnik. The software took in grammatical structures and vocabulary
+and churned out stochastically rendered poems. It was not until 1984 that
+another serious attempt at poetry generation was publicised with the release of
+a work by the program RACTER called \emph{The Policeman's Beard is Half-
+Constructed}. At 66 pages, \emph{Policeman's Beard} was a much larger effort
+than the handful of short poems output by Auto-Beatnik. However, the generation
+process was essentially the same idea: the program called upon built-in grammatical
+rules and a large vocabulary of english words \cite{Chamb84}. 
+
+In the same year appeared the Travesty Generator, written by literary scholar
+Hugh Kenner and computer scientist Joseph O'Rourke. Distinct from its
+contemporaries, the Travesty Generator produced 'poetry' without using built-in
+lexicons. Instead, the Generator used an algorithm that, given some $n$,
+reassembled an inputted text $t$ such that the result, $s$, contained all the
+same $n$ length substrings in $t$. At $n = 1$ the program simply shuffled the
+letters of $t$; but at about $n = 9$, $t$ begins to resemble a grammatically
+correct rearrangment of the phrases in $s$ \cite{Hart96}. Thus, for varying
+levels of $n$, new poetry could be produced from any input and this basic
+algorithm without the need for any kind of external lexicon.
 \subsection{Motivation}
 \section{Method 1}
 \section{Method 2}
