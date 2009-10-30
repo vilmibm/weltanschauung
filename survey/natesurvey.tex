@@ -1,0 +1,254 @@
+\documentclass[10pt]{article}
+\usepackage{moreverb}
+\usepackage{setspace}
+
+% Set Margins
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\hoffset=-.2in
+\setlength{\textheight}{9.5in}
+\setlength{\topmargin}{-1in}
+
+\title{Computer Poetry: A Survey}
+\author{Nathaniel K Smith}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper explores the history, trends, and current state of Computer Poetry.
+Examples of two major forms of computer mediated poetry creation will be
+discussed: poetry where the computer is a generator of text, and poetry where
+the computer is a filter or reassembler of an inputted text. Finally, this
+paper will evaluate the extent to which computer poetry can evolve through the
+utilization of Internet-based corpora.
+\end{abstract}
+
+\doublespacing
+
+\section{Introduction} 
+The evolution and proliferation of computer poetry has been sluggish at best.
+Charles O. Hartman suggests a simple explanations for this glacial trend: the
+intersection of programmers and poets has historically been rather small
+\cite{Hart96}. Thus, while architectures and programming languages have changed
+drastically the fundamental techniques, algorithms, and motivations have not.
+
+\subsection{History} 
+Computer poetry traces its roots back to 1962 with the authorship of a program
+called Auto-Beatnik. The software took in grammatical structures and vocabulary
+and churned out stochastically rendered poems. It was not until 1984 that
+another serious attempt at poetry generation was publicised with the release of
+a work by the program RACTER called \emph{The Policeman's Beard is Half-
+Constructed}. At 66 pages, \emph{Policeman's Beard} was a much larger effort
+than the handful of short poems output by Auto-Beatnik. However, the generation
+process was essentially the same idea: the program called upon built-in grammatical
+templates and a large vocabulary of english words \cite{Chamb84}. 
+
+In the same year appeared the Travesty Generator, written by literary scholar
+Hugh Kenner and computer scientist Joseph O'Rourke. Distinct from its
+contemporaries, the Travesty Generator produced 'poetry' without using built-in
+lexicons. Instead, the Generator used a Markov chain algorithm to rearrange the input text hoping for interesting results.
+
+\subsection{Two Categories}
+Auto-Beatnik and RACTER represent major seminal instances of one of the two
+major categories of computer poetry that we are left with today. This category,
+which I will refer to as \emph{Templatized} computer poetry, contains software
+that relies on grammatical templates and a large vocabulary to create new
+works. The software is essentially fed (or, in the case of the Prose system
+discussed below, generating) sentences with blanks to fill in using a
+dictionary.
+
+The other category, which I will refer to as \emph{Generative}, contains
+software which, like the Travesty Engine, relies only on input and an algorithm
+to produce its work. At its simplest this category would include a basic
+software designed only to, say, shuffle the characters or words in its input
+but would also contain grammatical natural language generation in response to 
+a human user.
+
+To use the summation found in \cite{Hart96}, templatized computer poetry has this flow:
+\begin{center}
+\begin{boxed}
+PROGRAM $\rightarrow$ TEXT
+\end{boxed}
+\end{center}
+while generative computer poetry looks like this:
+\begin{center}
+\begin{boxed}
+TEXT $\rightarrow$ PROGRAM $\rightarrow$ TEXT
+\end{boxed}
+\end{center}
+
+\section{Templatized Approaches}
+\subsection{RACTER}
+RACTER would seem to be the most successful poetry generation scheme given its
+famous publication. Upon closer inspection, however, the internals of RACTER
+are very simple and reveal that hardly any of the creative work is left to the
+software. The programmer creates a sentence template like this: 
+\begin{center}
+\begin{boxedverbatim} 
+THE noun.an verb.3p.et THE noun.fd 
+\end{boxedverbatim}
+\end{center} 
+and runs the program. The software then plugs in nouns and verbs (or adverbs
+and adjectives) where appropriate. The \verb|.an|, \verb|.et|, and \verb|.fd|
+suffixes indicate dictionary categories--in this case, animal nouns, different
+verbs for eating, and food nouns \cite{Hart96}. Such a static template means that there is no
+algorithmic work to produce poetry besides many invocations of a random number
+generator. Clearly, this is trivial from a technical standpoint and only
+produces interesting results if the original templates are interesting. 
+
+One interesting aspect of RACTER, however, is its brute-force semantics: the
+results of the program have meaning insofar as the template author choses
+meaningful sets of word categories in a given phrase. However, these semantics
+are still contrived and only one step away from a human author picking specific
+words instead of word categories.
+
+\subsection{Prose} 
+Prose, software by Charles O. Hartman from the 90s, extends
+the notion of templatized computer poetry to something far more complex and
+technically interesting than RACTER. Prose contains a dictionary and a
+context-free grammar. The words contained in the dictionary are marked as to
+their part of speech (noun, verb, etc.) and the grammar models english sentence
+structure. Beginning from a single starting point--'Sentence'--Prose
+recursively generates grammatically correct sentences using the context-free
+grammar, picking random expansions when able. The final result is a tree whose
+leaves represent atomic parts of the english language. Reading left to right, a
+possible leaf structure from a run of Prose could look like this (adapted from
+\cite{Hart96}):
+\begin{center}
+\begin{boxedverbatim} 
+!the Noun !of #PushPlur Substance #PopPlur IntrVerb @, PossPron Noun TransVerb Substance @.
+\end{boxedverbatim}
+\end{center} 
+Once this is generated, Prose then fills in each variable leaf (here identified
+by any string not starting with a control character like !, @, or \#) with an
+appropriate word from its dictionary.
+
+Conceptually this is a templatized approach like RACTER's; however the inherent
+complexity of the English language context-free grammar yields far more
+original and interesting results. One of the techniques employed that is worth
+mentioning is the use of the control sequences \verb|#PushPlur| and
+\verb|#PopPlur|. Each sentence begins in a singular context--as in, 'The
+dog'--and the tree denotes a change into a plural context using
+\verb|#PushPlur|. When Prose is picking words to populate the leaves of the
+generated tree, it will pluralize the nouns it picks until it sees
+\verb|#PopPlur|, which returns the sentence to singular context.
+
+\subsection{Hillclimbing algorithm}
+A more recent templatized technique is detailed in \cite{Manurung00} and \cite{Manurung03}. This
+technique stochastically evolves a poem from a simple phrase or set of simple
+phrases into an interesting poem using a set of evaluation functions.
+
+This approach is an even further departure from RACTER than Prose. The
+technique, packaged in software named McGonagall, relies on the manipulation of
+grammatical information using a Lexicalized Tree Adjoining Grammar (LTAG). The
+LTAG is a derivation tree; in other words, it itself does not describe the
+phrase structure of a sentence. Instead, it describes operations performed on a
+set of phrases. Each node of the LTAG is an elementary tree describing some
+phrase structure and each edge labels the location at which a child node should
+be inserted into its parent node. The phrase structures available for operating
+on within the LTAG are kept in a basic lexical collection like this (adapted
+from \cite{Manurung00}):
+\begin{boxedverbatim} 
+Orthography:fried
+Elementary Tree(s):ITV
+Signature:F,Frier,Fried
+Semantics:fry(F,Frier,Fried)
+Phonetic Spelling:f,r,ay1,d
+\end{boxedverbatim}
+
+An interesting feature to note about the semantics employed in
+this technique is the lack of coherence between the derivation tree's semantics
+and the semantics of an individual lexicon entry; however, general semantics
+are considered a necessary feature of a successful result. This
+feature--semantic coherence at both the LTAG and elementary level--is
+accomplished using a \emph{semantic realizer}, which analyzes the structure
+being evolved and attempts to select new nodes or make changes in the LTAG to
+achieve overall semantic coherence. This, along with similar operators, is
+potentially run at each evolutionary step of the software, which will randomly
+select operations to perform on the evolving poem \cite{Manurung00}.
+
+Finally, McGonagall employs two \emph{evaluator} functions, a meter evaluator
+and a semantic similarity evaluator, which check candidate solutions (in other
+words, poems evolved from initial phrases and applied operators) for desired
+features in an end result. Both functions are supplied with a target; for the
+former, a target would be some kind of metrical structure and for the latter, a
+basic semantic expression. As candidate poems are evolved, an evaluation step
+scores them based on their distance from the supplied targets. In this way are
+'successful' poems selected and the evolution terminated.
+
+\section{Generative Approaches}
+\subsection{Travesty Engine}
+The Travesty Engine's algorithm was a Markov chain that, given some $n$,
+reassembled an inputted text $t$ such that the result, $s$, contained all the
+same $n$ length substrings in $t$. At $n = 1$ the program simply shuffled the
+letters of $t$; but at about $n = 9$, $t$ begins to resemble a grammatically
+correct rearrangment of the phrases in $s$ \cite{Hart96}. Thus, for varying
+levels of $n$, new poetry could be produced from any input and this basic
+algorithm without the need for any kind of external lexicon.
+
+The program can be used practically to examine the style of a series of input
+texts and study the common letter combination frequencies. Purely from a
+creative point of view, however, it yields some fascinating results that often
+manage to capture the general semantics of the input text.
+
+It is worth noting that, by putting Travesty Engine output into ther simple
+rearranging softwares, more varied and interesting results can be
+obtained. This shows that chaining the TEXT $\rightarrow$ PROGRAM $\rightarrow$
+TEXT pattern is a viable way to increase originality in computer poetry.
+
+\subsection{Vector Space Model Haiku Generation}
+One approach, as detailed in \cite{Wong08}, begins in an interesting place:
+content found on blogs throughout the internet. This method produces modern (in
+other words, not strictly 5-7-5) haiku poems using randomly accessed blog
+content. 
+
+Before any utilization of blog data is used, a keyword lexicon is first built
+using common haiku terms. Using this lexicon, HTML output from a blog search
+engine is parsed and sentences containing lexicon words are extracted and
+converted into fragments according to English grammatical laws. Finally, longer
+fragments are filtered out of the repository leaving only fragments of a length
+suitable for use in haiku.
+
+Three keywords are randomly picked from the lexicon and used to further narrow
+the sentence repository. The remaining fragments are then run through an
+analysis stage in which sentence pairs are picked based on a vector
+representation of their semantic similarity. Finally, the 'best' three lines
+are picked for the final haiku, each one semantically involving one of the
+three random keywords originally picked.
+
+\subsection{CBR Approach}
+Another generative technique uses a Case-Based Reasoning approach to convert a
+sentence or set of sentences from prose into poetry \cite{Gervas01}. This
+approach uses a 4 step \emph{Retrieve}, \emph{Reuse}, \emph{Revise}, and
+\emph{Retain} process as is common in CBR applications \cite{Wong08}. 
+
+First, in the retrieve step, a verse example from some corpus is selected for
+each sentence of input. In the reuse step, each sentence of input is
+restrucuted, added to, and subtracted from to mirror the verse case selected
+from a corpus.  Next, a revise step allows a human or another program to
+evaluate the output for satisfaction according to certain poetic criteria.
+Finally, if it is determined that the resulting poem is fit, it is added to a
+verse repository for future reference in a retain step.
+
+%\subsection{GRIOT System}
+%\cite{Harrell05}
+
+\section{Conclusion}
+It is interesting to note that the level of variety possible within the two
+categories of computer poetry. Moreover, the lines between the two are
+frequently blurred: while in \cite{Gervas01} an input text is used, one could
+construe its corpus of cases to be a collection of templates. In
+\cite{Manurung03} the 'templates' are so abstract they resemble only in spirit
+the templates used in \cite{Chamb84}. One interesting currenty trend in
+computer poetry is the utilization of online corpora like blogs; here, the
+input almost resembles both a template (of potentially dubious grammatical
+accuracy given how many write online) and a text to be rearranged. Given the
+amount of content written online, English or otherwise, the internet's many
+corpora should be fruitful grounds for new approaches to computer poetry.
+
+\bibliography{surv}
+\bibliographystyle{apa}
+
+\end{document}
