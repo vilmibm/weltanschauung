@@ -1,0 +1,38 @@
+I will, by the end of the semester, have completed a piece of software that
+will produce computer poetry using a new cut-up algorithm.  It will
+differentiate itself from the existing computer poetry solutions by operating
+on large corpora, acquired and normalized by a component of the library, and
+producing pieces consisting of reappropriated, grammatically complete sentences
+and sentence fragments. By this means will my software avoid the work of
+generating grammatical structures on its own; it instead focuses only on higher
+level aspects of completed pieces (like rhyme scheme, syllabic consistency, or
+topical consistency) and depends on a large and diverse enough corpus to
+provide suitable candidate sentences and sentence fragments.
+
+A pseudo code implementation of my algorithm:
+
+    Given some corpus C
+    list     L <- normalize(C)
+    DB       D <- profile(L)
+    string   i <- input()
+    list     R <- rules_parse(i)
+    list     Q <- ruleset_to_queryset(R)
+    list     P <- {}
+    // at this point Q is a list of queries with the same cardinality as the set of lines desired in output poem (potentially default val)
+    for each query q in Q:
+        list S <- select(D, q)
+        if not S:
+            r' <- query_to_rule(q)
+            while r' <- decompose(r'):
+                query q' <- rule_to_query(r')
+                list S' <- select(D, q')
+                if S'
+                    S <- S'
+                    break
+                end
+            end
+        end
+        sentence s <- random(S) // can be optimized 
+        push(P, s)
+    end
+    output(P)

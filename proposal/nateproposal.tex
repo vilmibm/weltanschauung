@@ -1,0 +1,443 @@
+\documentclass[10pt]{article}
+\usepackage{moreverb}
+\usepackage{algorithmic}
+\usepackage{setspace} 
+\usepackage{url}
+\doublespacing
+
+% Set Margins
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\hoffset=-.2in
+\setlength{\textheight}{9.5in}
+\setlength{\topmargin}{-1in}
+
+\title{Senior Seminar Proposal}
+\author{Nathaniel K Smith}
+
+\begin{document}
+
+\maketitle
+
+\section{Background} 
+My research into existing work in the field of computer poetry revealed two
+general categories of techniques; one, I called \emp{Generative} and the other,
+\emp{Templatized}. The former category relies on some input text and an
+algorithm to produce new works, while the latter relies on a pre-defined
+grammatical (or semantic) template to produce work from scratch (in other
+words, without any input text).  
+
+The earliest forms of computer poetry were Templatized attempts. One, RACTER,
+used on very complex and human written templates which were populated randomly
+by a computer. Essentially, RACTER resembled the popular game Mad Libs; the
+templates had slots for nouns, verbs, and adjectives and the computer simply
+pulled from words lists to fill them \cite{Hart96}.
+
+A recent, and more advanced Templatized technique was the subject of the
+dissertation of \cite{Manurung03}. Contained within a software package called
+McGonagall, this technique stores "templates" in the form of Lexicalized Tree
+Adjoining Grammars. In other words, instead of storing hardcoded grammatical
+structures, a collection of LTAGs representing words and their semantics, part
+of speech, and phonetic attributes are used to evolve candidate poetic works.
+These works are evaluated by functions that check for certain poetic features
+(like rhyming and alliteration) and final "solutions" are presented to the
+user.
+
+An early and basic Generative approach is the Travesty Engine discussed in
+\cite{Hart96}. This technique accepted an input text and reorganized it using a
+Markov chain (a random generative process in which future states are selected
+based only on the present state of the generation). Given some $n$, the
+Travesty Engine reassembled an input text $t$ such that the result, $s$,
+contained all the same $n$ length substrings in $t$. At $n = 1$ the program
+simply shuffled the letters of $t$; but at about $n = 9$, $t$ begins to
+resemble a grammatically correct rearrangment of the phrases in $s$. Thus, for
+varying levels of $n$, new poetry could be produced from any input and this
+basic algorithm without the need for any kind of external lexicon.
+
+A recent technique, and one closest to the technique I will be proposing, uses
+Vector Space Modeling to produce Haiku using content found on blogs throughout
+the Internet \cite{Wong08}. This method produces modern (in other words, not
+strictly 5-7-5) Haiku poems using randomly accessed blog content. 
+
+Before any utilization of blog data is used, a keyword lexicon is first built
+using common Haiku terms. Using this lexicon, HTML output from a blog search
+engine is parsed and sentences containing lexicon words are extracted and
+converted into fragments according to English grammatical rules. Finally, longer
+fragments are filtered out of the repository leaving only fragments of a length
+suitable for use in Haiku.
+
+Three keywords are randomly picked from the lexicon and used to further narrow
+the sentence repository. The remaining fragments are then run through an
+analysis stage in which sentence pairs are picked based on a vector
+representation of their semantic similarity. Finally, the 'best' three lines
+are picked for the final Haiku, each one semantically involving one of the
+three random keywords originally picked.
+
+\subsection{Motivation}
+Throughout the course of my research it became evident that a common problem in
+computer poetry was simply the question: Why? Templatized techniques tended to
+rely almost exclusively on the human programmers designing the poetry
+generation software; it seemed like the computer was little more than a set of
+dice. In \cite{Manurung03}, where the Templatized technique is taken to an
+extreme, the semantic scope of the produced work is still strictly limited to
+what humans provide in the LTAG collection. It seems like computer poetry like
+this isn't contributing anything to the field that a human couldn't already do
+by hand.
+
+The question is easier to answer for Generative techniques. The Travesty
+Engine, for example, produces new arrangements of pieces that humans may never
+think to produce. It can reveal new meaning in an existing piece through purely
+aleatoric means. Similarly, in the VSM Haiku generator, the produced poetry can
+describe the zeitgeist of the blogs it searches (something that even Google
+struggles to do). Clearly this poetry was doing something that a human couldn't
+do: revealing meaning hidden within existing human prose. However, I submit
+that in the former example the rearrangement is too simple; it doesn't go far
+enough and its results become predictable after a fashion. In the latter
+example, the final Haiku bear too little resemblance to their source material
+to really articulate any kind of underlying meaning to the reader.
+
+Thus, I propose a new generative technique inspired by the work of the poet and
+author William Burroughs. This technique exploits the diversity and large
+number of sentences found in large corpora--for example, Wikipedia, the online
+articles of a newspaper, or online public domain books--by scanning the
+sentences within them, profiling them, and then using them to populate a poem
+based on rules input by a human user. Thus, the technique \emph{cuts up}, like
+Burroughs \cite{wikiCutup}, some given corpus in order to produce a poetic
+result. I argue that this technique produces interesting work, and present
+several features of the resulting pieces that support this.
+
+\subsubsection{Semantic Consistency}
+By using one or more topics as rules in the input to the software one can
+topically flavor the output without restricting it. Sentences relevant to the
+selected topic will be used to produce the final piece. The reader should be
+able to get a sense of what each produced poem is "about." It is important to
+note that this semantic consistency does not undermine juxtaposition, one of
+the important aspects of computer poetry \cite{Hart96}. The output will still
+contain the often jarring combination of seemingly otherwise unrelated phrases
+despite their semantic consistency.
+
+\subsubsection{Variable Structure}
+Poems produced by my technique can scale from completely arbitrary, random
+productions to very narrowly defined poetic structures (like sonnets, Haiku, or
+limericks). The rules engine system allows for great flexibility and is a key
+component of this technique. Its success, however, relies on the theory that
+large enough corpora will contain sentences diverse enough to satisfy any input
+rules.
+
+\subsubsection{Human Mediated, Not Human Authored}
+A key aspect of my approach is that, while all of the content used to produce
+works is written by humans, the meaning of the content is subverted and altered
+by the reappropriation process to create something new in which the humans and
+computers involved both played integral roles in the poetic production. I refer
+to the technique as being \emph{human mediated} as humans provide the
+media--prose sentences--while the computer acts as the artist. In this case,
+however, the computer is more like an artist of reappropriation like a DJ,
+collage artist, or cut-up author.
+
+\section{Project Description} 
+\subsection{Paper}
+\subsubsection{Abstract}
+This paper presents a new approach to computer poetry, presenting an algorithm
+that performs a directed cut-up generation technique on a large corpus. The
+technical implementation of the algorithm and its associated modules will be
+discussed in detail. To provide background and motivation, a survey of existing
+computer poetry generation techniques is presented with an analysis of their
+ability to produce interesting results. To support my analysis, I offer a
+discussion of how the technical implementation of computer poetry generation
+affects the production of interesting results. I argue that the new, presented
+algorithm fills both a technical and creative gap within the existing computer
+poetry landscape. Finally, opportunities for further research are discussed.
+
+\subsubsection{Outline}
+\onehalfspacing
+\begin{enumerate}
+\item Introduction
+\item Background and Motivation
+    \begin{enumerate}
+    \item Two Categories
+    \item Existing Research
+    \item Analysis
+        \begin{enumerate}
+        \item Effect of Technical Implementation on Composed Work
+        \item The Interestingness Problem
+        \end{enumerate}
+    \end{enumerate}
+\item Directed Cut-up Technique
+    \begin{enumerate}
+    \item Explication of Algorithm
+    \item Corpus Processing
+    \item Rules System
+        \begin{enumerate}
+        \item Rules Specification
+        \item Rules to Query Translation
+        \end{enumerate}
+    \item Final Composition
+    \end{enumerate}
+\item Results
+    \begin{enumerate}
+    \item Selected outputs
+    \item Defense of New Technique
+    \end{enumerate}
+\item Further Research
+\end{enumerate}
+
+\doublespacing
+
+\subsection{Software}
+I will, by the end of the semester, have completed an algorithm that
+produces computer poetry using a new cut-up technique. It will
+differentiate itself from existing computer poetry solutions by operating
+on large corpora, which it will acquire and analyze, and producing pieces
+consisting of reappropriated, grammatically complete sentences and sentence
+fragments. To direct the output, a ruleset describing the desired outcome is
+input to the software. This ruleset defines features like rhyme scheme,
+syllabic structure, stanza organization, length, and topic. By this means will
+my software avoid the work of generating grammatical structures on its own; it
+instead focuses only on higher level aspects of completed pieces (as described
+by the rulesets) and depends on a large and diverse enough corpus to provide
+suitable candidate sentences and sentence fragments.
+
+In cases where the algorithm cannot find any suitable sentences to meet some part
+of a supplied ruleset, it will iteratively weaken a ruleset until it finds a
+successful set of sentences to choose from. Any ruleset can be weakened to the
+trivial rule. This rule is defined as the rule which is satisfied by any given
+sentence or sentence fragment.
+
+\pagebreak
+\onehalfspacing
+\begin{figure}[here]
+\begin{algorithmic}
+\STATE Given some corpus $C$ and database handle $DB$
+\STATE $L\gets$ normalize($C$)
+\STATE insert($DB$, profile($L$))
+\STATE $i \gets$ input()
+\STATE $R \gets$ rulesParse($i$)
+\STATE $Q \gets \emptyset$
+\FOR{$r \in R$}
+    \STATE push($Q$, ruleToQuery($r$))
+\ENDFOR
+\STATE $P \gets \emptyset$
+\FOR{$q \in Q$}
+    \STATE $S \gets$ select($DB, q$)
+    \IF {not $S$}
+        \STATE $r\prime \gets$ queryToRule($q$)
+        \WHILE {$r\prime \gets$ decompose($r\prime$)}
+            \STATE $q\prime \gets$ ruleToQuery($r\prime$)
+            \STATE $S\prime \gets$ select($DB, q\prime$)
+            \IF { $S\prime$ }
+                \STATE $S \gets S\prime$
+                \STATE break
+            \ENDIF
+        \ENDWHILE
+    \ENDIF
+    \STATE $s \gets$ random($S$)
+    \STATE push($P, s$)
+\ENDFOR
+\STATE output($P$)
+\end{algorithmic}
+\caption{My algorithm}
+\label{fig:algorithm}
+\end{figure}
+\doublespacing
+
+The software will be centered around a basic, but novel, algorithm that employs
+this cut up technique. The algorithm is presented in Figure ~\ref{fig:algorithm}.
+It will assisted by a number of modules to handle corpus processing, rule
+management, and rule to database query translation. 
+
+As for technical implementation, the software will be written in the Perl
+programming language. Instead of a large RDBMS system, SQLite will be employed
+to hold normalized corpora.
+
+\subsection{Tasks}
+The project naturally divides into several subtasks. I will employ time
+tracking software to aid in the meeting of these estimates.
+
+\subsubsection{Prepare This Proposal}
+This took me about 6 hours.
+
+\subsubsection{Stub Needed Modules}
+Initially, all of the functions called by the algorithm in ~\ref{fig:algorithm}
+will be stubs. Before any coding work is done, the needed modules will need to
+be created and their functions all stubbed. This process is easy and should
+take only two hours.
+
+\subsubsection{Prepare Dummy Corpus}
+This task is nearly trivial; it is simply creating a list of sentences or
+sentence fragments for use in testing. As such, it should be completed before
+any implementation of the algorithm occurs. This task should only take one hour.
+
+\subsubsection{Implement Algorithm}
+Given the initial stubbed modules, I need to implement the algorithm in Perl.
+Given that most of the heavy lifting of this software is done in the modules
+this should not be overly difficult; however, given database calls, user input
+parsing, and general design decisions it will be a decidedly nontrivial task.
+This task will be considered complete when it successfully runs against the dummy
+corpus; this iteration of the project will serve as a first milestone for
+testing. This process should take around five hours.
+
+\subsubsection{Rule Specifications} 
+This task requires coming up with what features will be describable by my rules
+engine. This must be completed before any database querying work can begin
+as it will inform what aspects of reappropriated sentences must be contained
+withing the database schema. The specification will be presented in code as the
+rulesParse function of the RulesEngine module. This will introduce design
+decisions around how rules should be specified. Given elements of coding and
+design, this task should take about four hours.
+
+\subsubsection{Database Schema}
+Given the specified ruleset, the database schema should be trivial to come up
+with. This task should only take two hours.
+ 
+\subsubsection{Rule to Query Translation}
+The completion of this feature is the first step towards complex poems. It is
+essentially the implementation of the ruleToQuery and queryToRule functions of
+the RulesEngine module, which convert between final product features and
+database queries. The work will be similar to existing modules which convert
+hashes into SQL calls; however, it will be specifically tailored to my database
+schema. This will require a significant amount of programming work: about five
+hours.
+
+\subsubsection{Rule Decomposition}
+This task is a necessary one for the successful implementation of my algorithm
+as it guarantees termination in all cases. This work will culminate in the
+decompose function of the RulesEngine module. Though important, the amount of
+programming for this function is minimal, and should only take about two hours.
+
+\subsubsection{Corpus Normalization}
+This task is the implementation of the normalize function of the CorpusEngine
+module. It should, given a body of text stored in a string, produce a list of
+sentences and sentence fragments. While seemingly simple, I have attempted
+similar functionality in the past and found several pitfalls. It would be most
+useful to have this completed before any implementation of the profile function
+is begun. Thus, this task should take around four hours.
+
+\subsubsection{Corpus Profiling}
+This task is the implementation of the profile function of the CorpusEngine
+module. Given a normalized corpus, profile returns a data structure that
+describes the features (as specified by the ruleset definition) of each of its
+sentence and sentence fragments. Before considering this task complete, the
+logic for inserting this data structure into the database should be
+implemented. This task should take about five hours.
+
+\subsubsection{Corpus Acquisition}
+This is the most nebulous part of this project. At first, this task will be
+represented by one-off scripts that scrape and prepare unnormalized corpora for
+normalizing and profiling. It may be the case that a set of scraping scripts
+for different corpora may be all that end up as a part of this feature;
+otherwise, a general API for corpus acquisition will be designed. Given the
+dubious nature of this task, I will give it a slightly inflated time estimate
+of ten hours.
+
+\subsubsection{Testing and Refinement}
+This may end up being a repeated task, but will ideally be performed after all
+the major design decisions are made and implemented. It should take about two
+hours.
+
+\subsubsection{Explore Existing Research} 
+This work is largely completed in the form of my research paper. However, it
+will need to be expanded upon as the level of detail for my thesis paper should
+be greater than that of my survey paper.  About ten hours have already been put
+into this research, and 5 more should be sufficient for expanding it.
+
+\subsubsection{Write Introduction}
+This is a quick task and should take only one hour.
+
+\subsubsection{Explication of Algorithm}
+As this depends only on the basic structure of the new algorithm, it can be
+completed at any time and should not be too complicated. As such, it should
+take about two hours.
+
+\subsubsection{Results Collection}
+This obviously needs to happen after the programming work is in a complete or
+near-complete state. As it is merely collecting interesting outputs from my
+program, it should only take about one hour.
+
+\subsubsection{Explication of Software}
+This also needs to happen after all major design decisions about the software
+are finished. At that point, it will be easy but time consuming to explicate
+the work; it should take around three hours.
+
+\subsubsection{Defense of Technique}
+This should be based on both the software explication and the collected
+results. It should only take about two hours.
+
+\subsubsection{Further Research}
+This will depend either on what isn't finished due to time constraints or new
+features I discover while I work (but don't have time to implement). It should
+only take about one hour.
+
+\subsubsection{Final Proofreading}
+This is the final paper task and should take about two hours.
+
+\subsubsection{Colloquium Slides}
+These should take about two hours to put together.
+
+\section{Plan}
+This schedule assumes a nine/ten hour work week for this project.
+
+\subsection{Week 0: Oct 18}
+\begin{enumerate}
+\item Prepare this proposal 6
+\item Total 6 hours
+\end{enumerate}
+
+\subsection{Week 1: Oct 25}
+\begin{enumerate}
+\item Stub Needed Modules 2
+\item Prepare Dummy Corpus 1
+\item Explore Existing Research 5
+\item Write Introduction 1
+\item Total 9 hours
+\end{enumerate}
+
+\subsection{Week 2: Nov 1}
+\begin{enumerate}
+\item Implement Algorithm 5
+\item Rules Specification 4 
+\item Total 9 hours
+\end{enumerate}
+
+\subsection{Week 3: Nov 8}
+\begin{enumerate}
+\item Database Schema 2
+\item Rule to Query Translation 5
+\item Rule Decomposition 2
+\item Total 9 hours
+\end{enumerate}
+
+\subsection{Week 4: Nov 15}
+\begin{enumerate}
+\item Corpus Normalization 4
+\item Corpus Profiling 4
+\item Explication of Algorithm 2
+\item Total 10 hours
+\end{enumerate}
+
+\subsection{Week 5: Nov 22}
+\begin{enumerate}
+\item Corpus Acquisition 10
+\item Total 10 hours
+\end{enumerate}
+
+\subsection{Week 6: Nov 29}
+\begin{enumerate}
+\item Testing and Refinement 2
+\item Explication of Software 3
+\item Defense of Technique 2
+\item Further Research 1
+\item Final Proofreading 2
+\item Total 10 hours
+\end{enumerate}
+
+\subsection{Week 7: Dec 6}
+\begin{enumerate}
+\item Results Collection 1
+\item Prepare Colloquium Slides 2
+\item Total 3 hours
+\end{enumerate}
+
+\bibliography{prop}
+\bibliographystyle{apa}
+
+\end{document}
