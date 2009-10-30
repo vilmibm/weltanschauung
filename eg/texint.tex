@@ -1,0 +1,201 @@
+\documentclass[10pt]{article}
+\usepackage{moreverb}
+
+% Set Margins
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\hoffset=-.2in
+\setlength{\textheight}{9.5in}
+\setlength{\topmargin}{-1in}
+
+\title{Introduction to \LaTeX\ for Sophomore Seminar}
+\author{Jennifer Ziebarth \\
+(with slight modifications by Charlie Peck)}
+
+\begin{document}
+
+\maketitle
+
+\section{What is \LaTeX?}
+\LaTeX\ is a typesetting program designed especially for writing
+mathematical text.  You've already seen several examples of
+mathematical writing which was typset using either \LaTeX\ or its
+cousin, \TeX: Most handouts you get from me, Mic, or Tim are written
+in \LaTeX, and these days many mathematical books -- including {\em
+Chapter Zero} -- are typset using some form of \TeX. Writing
+mathematics in \LaTeX\ takes some getting used to, but the results are
+sufficiently pretty that I think you'll agree it's time well-spent.
+
+\LaTeX\ is equally suited to writing documents for computer science; articles, reports, papers, dissertations, and the like.  The learning 
+
+\section{Creating and Compiling a \LaTeX\ document}
+The first thing to keep in mind is that unlike a typical word
+processor, what you see as you create your \LaTeX\ file is not what the
+final product will look like.  Instead, you will use a {\em text
+editor} to type text intermixed 
+with various codes telling \LaTeX\ what to do.  Then you'll run your
+text through a {\em compiler}, and view the result with a {\em viewer}.
+Depending on how you do it, you might need to run a second program to
+get a printable \verb|.pdf| file.
+ 
+Schematically, this process looks like:
+
+\begin{center}
+
+\begin{tabular}{clc}
+    Text Editor (\verb|emacs|) & & Viewer (\verb|xdvi|) \\
+    \begin{boxedverbatim}
+	$\frac{d}{dx} \int_a^x
+	f(t) \; dt = f(x)$
+    \end{boxedverbatim}
+    & $\longrightarrow$ \verb|latex| $\longrightarrow$ &
+    \fbox{\parbox[b]{1.25in}
+    {$\frac{d}{dx}\int_a^x f(t) \; dt = f(x)$}} \\
+    \hfill $\searrow$ & & $\downarrow$ \\
+    & \verb|pdflatex| \hfill & \verb|dvipdfm| \\
+    & \hfill $\searrow$ & $\downarrow$ \\
+    && Printable \verb|.pdf| file (\verb|acroread|) \\
+    &&     \fbox{\parbox[b]{1.25in}
+    {$\frac{d}{dx}\int_{a}^{x} f(t) \; dt = f(x)$}} \\
+\end{tabular}
+\end{center}
+
+On quark and the ACL machines this can be acheived with: 
+\begin{verbatim}
+codd$ latex paper.tex           # DVI output, viewed with xdvi 
+codd$ pdflatex paper.tex        # PDF output, viewed with acroread
+\end{verbatim}
+
+\section{A simple \LaTeX\ document}
+By way of example, on a following page is a simple \LaTeX\ file input
+file and its output.  Here are
+some things to notice about it.
+
+\subsection{Preamble}
+The first few lines of the document, prior to the
+\verb|\begin{document}|, give \LaTeX\ some preliminary information
+about the document, tell \LaTeX\ where to look for some of the commands
+that will be used in the document.  The preamble also defines a few
+commands to be used later.  Don't worry much about the preamble for
+now.
+
+\subsection{Beginnings and Endings}
+The main part of the document begins with \verb|\begin{document}| and
+ends with \verb|\end{document}|.  In between, there are several
+smaller sections of the document that are set off with
+\verb|\begin{something}| and \verb|\end{something}|.
+
+\subsection{Mathematics}
+The heart of \LaTeX\ is its ability to typeset mathematics.  Anything
+mathematical is set off with either a single dollar sign \verb|$| at
+the beginning and the end, or with a double dollar sign \verb|$$| at
+the beginning and the end.  Mathematical symbols are represented by
+commands such as \verb|\cup| or \verb|\in|.
+
+
+\subsection{Graphics}
+If you want to get fancy, you can include files created elsewhere into
+a \LaTeX\ document.  The easiest way to do this is to save your picture
+as an Encapsulated Postscript (\verb|.eps|) file.  Maple, in
+particular, can export any graph it creates to an \verb|.eps| file. 
+The lines in the preamble following \verb|%Figures| define a command,
+\verb|\myfig|, for including figures.  The \verb|\myfig| command is
+used at the end of the document.  
+
+{\em Caution:} \verb|.eps| figures typically can't be seen when you
+view the file with \verb|xdvi|, only when you look at the \verb|.pdf| 
+file.
+
+\section{A More Complicated \LaTeX\ document}
+Following the simple \LaTeX\ file and its output, you'll find a more
+complicated \LaTeX file and the output it produces.  Some things to
+notice about the more complicated document:
+
+\subsection{``Hidden'' preamble}
+The preamble to the second document is actually pretty short, but
+that's because the most complicated parts have been placed into
+another file, \verb|macros.tex|.
+
+\subsection{Sectioning}
+This document is broken down into numbered sections.  The sections are
+given names inside the \LaTeX\ file with the \verb|\label| command, so
+they can be referred to by number with the \verb|\ref| command.
+\LaTeX\ will keep track of the section number for you, even if you
+insert a new section, causing everything to be re-numbered.
+Similarly, theorems are numbered and can be referred to by number.
+
+\subsection{Tables}
+\LaTeX\ can make tables.  Within a table, separate entries with
+\verb|&| and end a line with \verb|\\|.
+
+\begin{center}
+\begin{boxedverbatim}
+\documentclass[10pt]{article}
+\usepackage{amsmath,amsthm}
+\usepackage{epsfig}
+
+\newcommand{\myfig}[2]{\begin{figure}[htbp]\begin{center}
+      {\scalebox{.4}{\includegraphics{#1.eps}}}
+      \caption{#2}\label{fig:#1}
+    \end{center}\end{figure}}
+
+\newtheorem*{theorem}{Theorem}
+
+\begin{document}
+
+\begin{theorem}[2.4.2]
+    Let $A$, $B$, and $C$ be sets.  Then
+    $$A \cup (B \cap C) = (A \cup B) \cap (A \cup C).$$
+\end{theorem}
+
+\begin{proof}
+    To show that $A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$ we
+    must show two things:
+    
+    \begin{align*}
+	(\subseteq) & \qquad A \cup (B \cap C) \subseteq (A \cup B)
+	\cap (A \cup C), \\
+	(\supseteq) & \qquad (A \cup B) \cap (A \cup C) \subseteq A
+	\cup (B \cap C).
+    \end{align*}
+
+    \begin{itemize}
+	\item[$(\subseteq)$] 
+	To prove the first inclusion, let $x \in A \cup (B \cap C)$.
+	This means that $x \in A$ or $x \in (B \cap C)$.  If $x \in
+	A$, then $x$ is in the union of $A$ with any other set.  So $x
+	\in A \cup B$, and $x \in A \cup C$.  Likewise, if $x \in (B
+	\cap C)$, then $x \in B$ and $x \in C$.  We can deduce from
+	this that $x \in A \cup B$ and that $x \in A \cup C$.  In
+	either case, $x$ is seen to be in $(A \cup B) \cap (A \cup
+	C)$.  This concludes the proof that $A \cup (B \cap C)
+	\subseteq (A \cup B) \cap (A \cup C)$.
+
+
+	\item[$(\supseteq)$]
+	Conversely, to prove the second inclusion, suppose that $x \in
+	(A \cup B) \cap (A \cup C)$.  That is, $x \in (A \cup B)$ and
+	$x \in (A \cup C)$.  We know in general, of course, that
+	either $x \in A$ or $x \not\in A$.  If $x \in A$, then
+	certainly $x \in A \cup (B \cap C).$ So suppose that $x
+	\not\in A$.  In this case, $x$ must be in $B$ because $x \in A
+	\cup B$.  Also we see that $x \in C$ since $x \in A \cup C$.
+	We then conclude that $x \in B \cap C$.  Hence here, too, $x
+	\in A \cup (B \cap C)$.  We have now shown that $(A \cup B)
+	\cap (A \cup C) \subseteq A \cup (B \cap C)$.
+    \end{itemize}
+    
+    Therefore, $A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$.
+\end{proof}
+
+\myfig{venn}{Venn Diagram for 
+$A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$}
+
+\end{document}
+\end{boxedverbatim}
+\end{center}
+
+
+
+
+\end{document}
