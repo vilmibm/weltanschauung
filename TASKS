@@ -1,0 +1,119 @@
+Prepare This Proposal
+This took me about 6 hours.
+
+Stub Needed Modules
+Initially, all of the functions called by the algorithm in ~\ref{fig:algorithm
+will be stubs. Before any coding work is done, the needed modules will need to
+be created and their functions all stubbed. This process is easy and should
+take only two hours.
+
+Prepare Dummy Corpus
+This task is nearly trivial; it is simply creating a list of sentences or
+sentence fragments for use in testing. As such, it should be completed before
+any implementation of the algorithm occurs. This task should only take one hour.
+
+Implement Algorithm
+Given the initial stubbed modules, I need to implement the algorithm in Perl.
+Given that most of the heavy lifting of this software is done in the modules
+this should not be overly difficult; however, given database calls, user input
+parsing, and general design decisions it will be a decidedly nontrivial task.
+This task will be considered complete when it successfully runs against the dummy
+corpus; this iteration of the project will serve as a first milestone for
+testing. This process should take around five hours.
+
+Rule Specifications 
+This task requires coming up with what features will be describable by my rules
+engine. This must be completed before any database querying work can begin
+as it will inform what aspects of reappropriated sentences must be contained
+withing the database schema. The specification will be presented in code as the
+rulesParse function of the RulesEngine module. This will introduce design
+decisions around how rules should be specified. Given elements of coding and
+design, this task should take about four hours.
+
+Database Schema
+Given the specified ruleset, the database schema should be trivial to come up
+with. This task should only take two hours.
+ 
+Rule to Query Translation
+The completion of this feature is the first step towards complex poems. It is
+essentially the implementation of the ruleToQuery and queryToRule functions of
+the RulesEngine module, which convert between final product features and
+database queries. The work will be similar to existing modules which convert
+hashes into SQL calls; however, it will be specifically tailored to my database
+schema. This will require a significant amount of programming work: about five
+hours.
+
+Rule Decomposition
+This task is a necessary one for the successful implementation of my algorithm
+as it guarantees termination in all cases. This work will culminate in the
+decompose function of the RulesEngine module. Though important, the amount of
+programming for this function is minimal, and should only take about two hours.
+
+Corpus Normalization
+This task is the implementation of the normalize function of the CorpusEngine
+module. It should, given a body of text stored in a string, produce a list of
+sentences and sentence fragments. While seemingly simple, I have attempted
+similar functionality in the past and found several pitfalls. It would be most
+useful to have this completed before any implementation of the profile function
+is begun. Thus, this task should take around four hours.
+
+Corpus Profiling
+This task is the implementation of the profile function of the CorpusEngine
+module. Given a normalized corpus, profile returns a data structure that
+describes the features (as specified by the ruleset definition) of each of its
+sentence and sentence fragments. Before considering this task complete, the
+logic for inserting this data structure into the database should be
+implemented. This task should take about five hours.
+
+Corpus Acquisition
+This is the most nebulous part of this project. At first, this task will be
+represented by one-off scripts that scrape and prepare unnormalized corpora for
+normalizing and profiling. It may be the case that a set of scraping scripts
+for different corpora may be all that end up as a part of this feature;
+otherwise, a general API for corpus acquisition will be designed. Given the
+dubious nature of this task, I will give it a slightly inflated time estimate
+of ten hours.
+
+Testing and Refinement
+This may end up being a repeated task, but will ideally be performed after all
+the major design decisions are made and implemented. It should take about two
+hours.
+
+Explore Existing Research 
+This work is largely completed in the form of my research paper. However, it
+will need to be expanded upon as the level of detail for my thesis paper should
+be greater than that of my survey paper.  About ten hours have already been put
+into this research, and 5 more should be sufficient for expanding it.
+
+Write Introduction
+This is a quick task and should take only one hour.
+
+Explication of Algorithm
+As this depends only on the basic structure of the new algorithm, it can be
+completed at any time and should not be too complicated. As such, it should
+take about two hours.
+
+Results Collection
+This obviously needs to happen after the programming work is in a complete or
+near-complete state. As it is merely collecting interesting outputs from my
+program, it should only take about one hour.
+
+Explication of Software
+This also needs to happen after all major design decisions about the software
+are finished. At that point, it will be easy but time consuming to explicate
+the work; it should take around three hours.
+
+Defense of Technique
+This should be based on both the software explication and the collected
+results. It should only take about two hours.
+
+Further Research
+This will depend either on what isn't finished due to time constraints or new
+features I discover while I work (but don't have time to implement). It should
+only take about one hour.
+
+Final Proofreading
+This is the final paper task and should take about two hours.
+
+Colloquium Slides
+These should take about two hours to put together.
