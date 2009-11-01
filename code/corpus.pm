@@ -7,6 +7,18 @@
 package corpus;
 use base 'Exporter';
 
+# CPAN modules
+use Perl6::Junction 'any';
+use List::Util 'reduce';
+use Lingua::EN::Sentence qw/
+    get_sentences
+    add_acronyms
+/;
+use Lingua::EN::Syllable;
+use Lingua::EN::Hyphenate 'syllables';
+use Lingua::EN::Phoneme;
+use Lingua::EN::Splitter 'words';
+
 @EXPORT_OK = qw/
     normalize
     profile
@@ -27,7 +39,15 @@ Returns:
 sub normalize {
     my $string = shift;
 
-    my $list = [];
+    $string =~ s/^(.*)[^.]$/$1\./;
+    $string =~ s/\n//;
+
+    add_acronyms(qw/
+        Trans
+        A
+    /);
+
+    my $list = get_sentences($string);
 
     return $list;
 }
@@ -47,6 +67,20 @@ sub profile {
     my $normalized = shift;
 
     my $list = [];
+    my $words;
+    my @last_word_phonemes;
+    my $num_syllables;
+    for my $sentence ( @$normalized ) {
+        $words = words $sentence;
+
+        push @$list, { 
+            sentence        => $sentence,
+            num_words       => scalar @$words, 
+            num_syllables   => _get_syllable_count($words), 
+            end_rhyme_sound => _find_rhyme_sound($words->[-1]),
+        };
+    }
+
     return $list;
 }
 
@@ -67,6 +101,60 @@ sub insert_into_db {
     my $profiles = shift;
 
     return 0;
+}
+
+=head _get_syllable_count
+
+    my $count = _get_syllable_count($words_aref);
+
+This is here because reduce { syllable $a + syllable $b } @$words was producing bad results.
+
+Args:
+    -array ref of words
+
+Returns:
+    -syllable count
+
+=cut
+sub _get_syllable_count {
+    my $words = shift;
+
+    my $count = 0;
+    $count = $count + syllable($_) for @$words;
+    #my @syls;
+    #for my $word ( @$words ) {
+    #    @syls = syllables($word);
+    #    $count = $count + scalar @syls;
+    #}
+
+    return $count;
+}
+
+=head2 _find_rhyme_sound
+
+    my $rhyme_sound = _find_rhyme_sound($word);
+
+Args:
+    -some word in English
+
+Returns:
+    -A string representing the phoneme pattern against which one can check for rhymes
+
+=cut
+sub _find_rhyme_sound {
+    my $word = shift;
+
+    my $lep = Lingua::EN::Phoneme->new;
+
+    my @phons = $lep->phoneme($word);
+
+    my $num_phons = scalar @phons;
+
+    return pop @phons if scalar @phons == any(1,2);
+
+    return join '', @phons[-3,-2,-1] if $phons[-1] eq 'S';
+
+    return join '', @phons[-2,-1];
 }
 
 1

@@ -9,6 +9,8 @@ use strict;
 
 # CPAN modules
 use File::Slurp 'slurp';
+# XXX debug
+use Data::Dumper;
 
 # thesis modules
 use corpus qw/
@@ -24,14 +26,11 @@ use rules qw/
 /;
 
 # XXX hardcoded for now
-my $corpus_file = 'corborgepus';
+#my $corpus_file = 'corborgepus';
+my $corpus_file = 'trivial_corpus';
 
 my $corpus_str = slurp( $corpus_file );
 
 my $profiled_aref = profile normalize slurp $corpus_file;
 
-#my $lines_aref = normalize($corpus_str);
-
-#my $profiled_aref = profile($lines_aref);
-
-
+print Dumper $profiled_aref;
