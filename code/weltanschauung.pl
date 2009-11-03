@@ -29,8 +29,6 @@ use rules qw/
 #my $corpus_file = 'corborgepus';
 my $corpus_file = 'trivial_corpus';
 
-my $corpus_str = slurp( $corpus_file );
-
-my $profiled_aref = profile normalize slurp $corpus_file;
+my $profiled_aref = profile( normalize( slurp( $corpus_file)));
 
 print Dumper $profiled_aref;

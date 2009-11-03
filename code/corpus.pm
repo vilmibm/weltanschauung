@@ -120,7 +120,11 @@ sub _get_syllable_count {
     my $words = shift;
 
     my $count = 0;
+    # XXX Two methods for counting syllables; both provide slightly wrong results. Not sure which to use.
+    # XXX Can I use Lingua::EN::Phoneme to do my own counting algorithm? Maybe ask Jim?
+    # Lingua::EN::Syllable:
     $count = $count + syllable($_) for @$words;
+    # syllables method from Lingua::EN::Hyphenate
     #my @syls;
     #for my $word ( @$words ) {
     #    @syls = syllables($word);

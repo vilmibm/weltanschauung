@@ -1,6 +1,13 @@
+Stats:
+
+As of 2 Nov 2009...
+7 hrs of 61hrs done == 11.5% towards completion
+
+2hrs behind.
+
 Week 1: Oct 25
-Stub Needed Modules 2
-Prepare Dummy Corpus 1
+X Stub Needed Modules 2
+X Prepare Dummy Corpus 1
 Explore Existing Research 5
 Write Introduction 1
 Total 9 hours
@@ -8,7 +15,8 @@ Total 9 hours
 Week 2: Nov 1
 Implement Algorithm 5
 Rules Specification 4 
-Total 9 hours
+Testing & Refinement 1
+Total 10 hours
 
 Week 3: Nov 8
 Database Schema 2
@@ -17,8 +25,8 @@ Rule Decomposition 2
 Total 9 hours
 
 Week 4: Nov 15
-Corpus Normalization 4
-Corpus Profiling 4
+X Corpus Normalization 4
+- Corpus Profiling 4
 Explication of Algorithm 2
 Total 10 hours
 
