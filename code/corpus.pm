@@ -9,7 +9,7 @@ use base 'Exporter';
 
 # CPAN modules
 use Perl6::Junction 'any';
-use List::Util 'reduce';
+#use List::Util 'reduce';
 use Lingua::EN::Sentence qw/
     get_sentences
     add_acronyms
