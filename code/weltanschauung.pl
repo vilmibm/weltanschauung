@@ -13,7 +13,7 @@ use File::Slurp 'slurp';
 use Data::Dumper;
 
 # thesis modules
-use corpus qw/
+use Corpus qw/
     normalize
     profile
     insert_into_db
@@ -27,7 +27,7 @@ use rules qw/
 
 # XXX hardcoded for now
 #my $corpus_file = 'corborgepus';
-my $corpus_file = 'trivial_corpus';
+my $corpus_file = 'simple_corpus';
 
 my $profiled_aref = profile( normalize( slurp( $corpus_file)));
 

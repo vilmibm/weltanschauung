@@ -6,7 +6,7 @@
 
 use lib '..';
 
-use corpus qw/
+use Corpus qw/
     profile
     normalize 
     insert_into_db

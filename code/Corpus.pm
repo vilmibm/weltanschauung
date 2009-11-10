@@ -4,7 +4,7 @@
 # when  Oct 09
 # where CS488 Earlham College
 
-package corpus;
+package Corpus;
 use base 'Exporter';
 
 # CPAN modules
@@ -47,6 +47,8 @@ sub normalize {
         A
     /);
 
+    # my brief experiments show that this returns sentences in-order. if this later
+    # proves to not be the case, I will have to reimplement this.
     my $list = get_sentences($string);
 
     return $list;
@@ -67,6 +69,7 @@ sub profile {
     my $normalized = shift;
 
     my $list = [];
+    my $line_no = 0;
     my $words;
     my @last_word_phonemes;
     my $num_syllables;
@@ -78,6 +81,7 @@ sub profile {
             num_words       => scalar @$words, 
             num_syllables   => _get_syllable_count($words), 
             end_rhyme_sound => _find_rhyme_sound($words->[-1]),
+            line_no         => $line_no++,
         };
     }
 
@@ -120,18 +124,36 @@ sub _get_syllable_count {
     my $words = shift;
 
     my $count = 0;
-    # XXX Two methods for counting syllables; both provide slightly wrong results. Not sure which to use.
-    # XXX Can I use Lingua::EN::Phoneme to do my own counting algorithm? Maybe ask Jim?
-    # Lingua::EN::Syllable:
-    $count = $count + syllable($_) for @$words;
-    # syllables method from Lingua::EN::Hyphenate
-    #my @syls;
-    #for my $word ( @$words ) {
-    #    @syls = syllables($word);
-    #    $count = $count + scalar @syls;
-    #}
+    my $total = 0;
 
-    return $count;
+    my $lep = Lingua::EN::Phoneme->new();
+
+    for my $word (@$words) {
+        $count = 0;
+        my @phons = $lep->phoneme($words);
+   
+        length == 3 ? $count++ : '' for @phons;
+  
+        $total += $count && next if $count; 
+
+        # $count was still zero, so we'll fall back
+        # to Lingua::EN::Syllable
+
+        $count = $count + syllable($word);
+
+        # could still fall back to Lingua::EN:Hyphenate, but not sure how
+        # to check the accuracy of syllable(). Here for later, if needed.
+        # syllables method from Lingua::EN::Hyphenate
+        #my @syls;
+        #for my $word ( @$words ) {
+        #    @syls = syllables($word);
+        #    $count = $count + scalar @syls;
+        #}
+
+        $total += $count;
+    }
+
+    return $total;
 }
 
 =head2 _find_rhyme_sound
@@ -151,6 +173,8 @@ sub _find_rhyme_sound {
     my $lep = Lingua::EN::Phoneme->new;
 
     my @phons = $lep->phoneme($word);
+
+    return '' unless @phons;
 
     my $num_phons = scalar @phons;
 
