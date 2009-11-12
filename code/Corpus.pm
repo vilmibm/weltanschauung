@@ -80,6 +80,8 @@ sub profile {
     my @last_word_phonemes;
     my $num_syllables;
     for my $sentence ( @$normalized ) {
+        # first of probably several sloppy regexes
+        $sentence =~ s/'//g;
         $words = words $sentence;
 
         push @$list, { 
