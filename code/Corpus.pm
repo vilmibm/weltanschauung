@@ -3,6 +3,8 @@
 # why   part of senior thesis
 # when  Oct 09
 # where CS488 Earlham College
+use warnings;
+use strict;
 
 package Corpus;
 use base 'Exporter';
@@ -18,8 +20,12 @@ use Lingua::EN::Syllable;
 use Lingua::EN::Hyphenate 'syllables';
 use Lingua::EN::Phoneme;
 use Lingua::EN::Splitter 'words';
+# can't finish implementing the Unapostrophe module as I can't
+# syntactically distinguish between possessives and contractions involving
+# pronouns. Argh! strip apostrophes for now.  
+#use Lingua::EN::Unapostrophe 'unapostrophe';
 
-@EXPORT_OK = qw/
+our @EXPORT_OK = qw/
     normalize
     profile
     insert_into_db
