@@ -136,9 +136,12 @@ sub _get_syllable_count {
 
     my $lep = Lingua::EN::Phoneme->new();
 
+    my @phons;
     for my $word (@$words) {
         $count = 0;
-        my @phons = $lep->phoneme($words);
+      
+        # this warns about unit'd strings. it's normal and can be ignored.
+        @phons = $lep->phoneme($words);
    
         length == 3 ? $count++ : '' for @phons;
   
@@ -182,7 +185,7 @@ sub _find_rhyme_sound {
 
     my @phons = $lep->phoneme($word);
 
-    return '' unless @phons;
+    return '' unless @phons; #not rhymable, I guess?
 
     my $num_phons = scalar @phons;
 
