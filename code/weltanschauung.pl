@@ -37,10 +37,14 @@ my $profiled_aref = profile(normalize(slurp($corpus_file)));
 # XXX debug
 print Dumper $profiled_aref;
 
-my $dbh = DBI->connect("dbi:SQlite:dbname=:memory:", '', '');
-my $dbx = DBIx::Interp->new($dbh)
+my $dbh = DBI->connect("dbi:SQLite:dbname=:memory:", '', '');
+my $dbx = DBIx::Interp->new($dbh);
 
-create_db() || die 'Failed to create internal database';
+create_db($dbx)                      || die 'Failed to create internal database';
 insert_into_db($dbx, $profiled_aref) || die 'Failed to insert into internal database';
 
 # XXX Algorithm
+
+# Note that a warning is thrown about active handles. This is a recognized bug
+# in DBD::SQLite.
+$dbh->disconnect();

@@ -103,9 +103,15 @@ sub profile {
 
 Create an in-RAM db for storing and retrieving lines
 
+Args:
+    -$dbh DBIx::Interp handle
+Returns:
+    -unsure; let's hope it's positive.
+
 =cut
 sub create_db {
-    return $dbx->do_i("CREATE TABLE lines (
+    my $dbh = shift || return 0;
+    return $dbh->do_i("CREATE TABLE lines (
         line_no         integer primary key,
         num_words       integer,
         num_syllables   integer,
@@ -167,7 +173,9 @@ sub _get_syllable_count {
       
         # this warns about unit'd strings. it's normal and can be ignored.
         @phons = $lep->phoneme($words);
-   
+  
+        # this ugly is thanks to not being able to chain one line ifs and fors
+        # in Perl. 
         length == 3 ? $count++ : '' for @phons;
   
         $total += $count && next if $count; 
