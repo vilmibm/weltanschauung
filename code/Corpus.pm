@@ -22,10 +22,11 @@ use Lingua::EN::Phoneme;
 use Lingua::EN::Splitter 'words';
 # can't finish implementing the Unapostrophe module as I can't
 # syntactically distinguish between possessives and contractions involving
-# pronouns. Argh! strip apostrophes for now.  
+# pronouns. Argh! stripping apostrophes for now.  
 #use Lingua::EN::Unapostrophe 'unapostrophe';
 
 our @EXPORT_OK = qw/
+    create_db
     normalize
     profile
     insert_into_db
@@ -96,6 +97,25 @@ sub profile {
     return $list;
 }
 
+=head2 create_db
+
+    my $success = create_db()
+
+Create an in-RAM db for storing and retrieving lines
+
+=cut
+sub create_db {
+    return $dbx->do_i("CREATE TABLE lines (
+        line_no         integer primary key,
+        num_words       integer,
+        num_syllables   integer,
+        end_rhyme_sound string,
+        sentence        string
+    )");
+}
+
+
+
 =head2 insert_into_db
 
     my $success = insert_into_db($dbh, $profiles_aref);
@@ -109,10 +129,15 @@ Returns:
 
 =cut
 sub insert_into_db {
-    my $dbh      = shift;
-    my $profiles = shift;
+    my $dbh      = shift || return 0;
+    my $profiles = shift || return 0;
 
-    return 0;
+    my $rows_inserted = 0;
+    for my $profile (@$profiles) {
+        $rows_inserted += $dbh->do_i('INSERT INTO lines', $profile);
+    }
+
+    return $rows_inserted;
 }
 
 =head _get_syllable_count
