@@ -174,14 +174,11 @@ sub _get_syllable_count {
         # this warns about unit'd strings. it's normal and can be ignored.
         @phons = $lep->phoneme($words);
   
-        # this ugly is thanks to not being able to chain one line ifs and fors
-        # in Perl. 
-        length == 3 ? $count++ : '' for @phons;
+        for my $phon (@phons) { $count++ if length $phon == 3 }
   
-        $total += $count && next if $count; 
+        $total += $count && next if $count; # move to next word if that worked
 
-        # $count was still zero, so we'll fall back
-        # to Lingua::EN::Syllable
+        # $count was still zero, so we'll fall back to Lingua::EN::Syllable
 
         $count = $count + syllable($word);
 
