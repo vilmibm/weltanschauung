@@ -1,5 +1,5 @@
 DBIx::Simple
-DBIx::Interp
+SQL::Interp
 
 Lingua::EN::Syllable
 Lingua::EN::Hyphenate
