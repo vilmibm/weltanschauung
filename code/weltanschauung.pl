@@ -50,10 +50,22 @@ my $queries = [];
 
 push @$queries, rule_to_query($_) for @$rules;
 
-my $sentence;
+my ($poem, $sentence, $sentences, $sentences_prime, $rule_prime, $query_prime);
 for my $query (@$queries) {
-    #$sentence = $db->selectall_
+    $sentences = $db->iquery($query)->hashes;
+    if ( not @$sentences ) {
+        $rule_prime = query_to_rule($query);
+        while ( $rule_prime = decompose($rule_prime) ) {
+            $query_prime     = rule_to_query($rule_prime);
+            $sentences_prime = $db->iquery($query)->hashes;
+            $sentences = $sentences_prime and last if @$sentences_prime;
+        }
+    }
+    $sentence = $sentences->[int rand];
+    push @$poem, $sentence;            
 }
+
+print $_, "\n" for @$poem;
 
 END {
     $db->disconnect(); # a warning is thrown about active handles, a recognized bug in DBD::SQLite
