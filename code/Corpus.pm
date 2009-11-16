@@ -110,8 +110,8 @@ Returns:
 
 =cut
 sub create_db {
-    my $dbh = shift || return 0;
-    return $dbh->do_i("CREATE TABLE lines (
+    my $db = shift || return 0;
+    return $db->iquery("CREATE TABLE lines (
         line_no         integer primary key,
         num_words       integer,
         num_syllables   integer,
@@ -135,12 +135,12 @@ Returns:
 
 =cut
 sub insert_into_db {
-    my $dbh      = shift || return 0;
+    my $db      = shift || return 0;
     my $profiles = shift || return 0;
 
     my $rows_inserted = 0;
     for my $profile (@$profiles) {
-        $rows_inserted += $dbh->do_i('INSERT INTO lines', $profile);
+        $rows_inserted += $db->iquery('INSERT INTO lines', $profile);
     }
 
     return $rows_inserted;

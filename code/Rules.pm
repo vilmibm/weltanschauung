@@ -4,7 +4,7 @@
 # why   senior thesis
 # where CS488 Earlham College
 
-package rules;
+package Rules;
 use base 'Exporter';
 
 @EXPORT_OK = qw/
