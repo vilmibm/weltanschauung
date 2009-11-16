@@ -1,0 +1,12 @@
+DBIx::Simple
+DBIx::Interp
+
+Lingua::EN::Syllable
+Lingua::EN::Hyphenate
+Lingua::EN::Phoneme
+Lingua::EN::Splitter
+Lingua::EN::Sentence
+
+File::Slurp
+
+Perl6::Junction
