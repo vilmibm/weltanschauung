@@ -40,11 +40,17 @@ my $rhyme_scheme = 'AB';
 my $syll_scheme  = [5, 10];
 ############
 
+my $rule_href = {
+    length       => $length       || 10,
+    rhyme_scheme => $rhyme_scheme || 'AB',
+    syll_scheme  => $syll_scheme  || [5,10],
+};
+
 my $profiled_aref = profile(normalize(slurp($corpus_file)));
 
 insert_into_db($db, $profiled_aref) || die 'Failed to insert into internal database';
 
-my $rules = rules_parse($length, $rhyme_scheme, $syll_scheme); # XXX this signature will probably change
+my $rules = rules_parse($rule_href); # XXX this signature will probably change
 
 my $queries = [];
 

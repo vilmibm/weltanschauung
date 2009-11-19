@@ -16,10 +16,10 @@ use base 'Exporter';
 
 =head2 rules_parse
     
-    my $rules_aref = rules_parse($user_input);
+    my $rules_aref = rules_parse($rules_href);
 
 Args:
-    -some user input string
+    -rules_href derived from user input (or defaults)
 
 Returns:
     -array ref of list of rules
