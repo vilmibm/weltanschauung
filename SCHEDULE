@@ -1,7 +1,7 @@
 Stats:
 
 As of 2 Nov 2009...
-18 hrs of 61hrs done == 29.5% towards completion
+25 hrs of 61hrs done == 40.1% towards completion
 
 Week 1: Oct 25
 X Stub Needed Modules 2
@@ -12,13 +12,13 @@ Total 9 hours
 
 Week 2: Nov 1
 X Implement Algorithm 5
-Rules Specification 4 
+- Rules Specification 4 
 Testing & Refinement 1
 Total 10 hours
 
 Week 3: Nov 8
 X Database Schema 2
-Rule to Query Translation 5
+X Rule to Query Translation 5
 Rule Decomposition 2
 Total 9 hours
 
