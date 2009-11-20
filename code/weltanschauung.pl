@@ -33,24 +33,24 @@ create_db($db) || die 'Failed to create internal database';
 
 ############ XXX things that are hardcoded for now but will be user-input later
 # my $corpus_file  = 'corborgepus';
-# my $corpus_file  = 'simple_corpus';
-my $corpus_file  = 'trivial_corpus';
+ my $corpus_file  = 'simple_corpus';
+#my $corpus_file  = 'trivial_corpus';
 my $length       = 10;
-my $rhyme_scheme = 'AB';
-my $syll_scheme  = [5, 10];
+my $rhyme_scheme = ['A', 'B', 'C'];
+my $syll_scheme  = [5, 10, 7];
 ############
 
 my $rule_href = {
-    length       => $length       || 10,
-    rhyme_scheme => $rhyme_scheme || 'AB',
-    syll_scheme  => $syll_scheme  || [5,10],
+    length       => $length       // 10,
+    rhyme_scheme => $rhyme_scheme // ['A', 'B'],
+    syll_scheme  => $syll_scheme  // [5, 10],
 };
 
 my $profiled_aref = profile(normalize(slurp($corpus_file)));
 
 insert_into_db($db, $profiled_aref) || die 'Failed to insert into internal database';
 
-my $rules = rules_parse($rule_href); # XXX this signature will probably change
+my $rules = rules_parse($db, $rule_href); # XXX this signature will probably change
 
 my $queries = [];
 
