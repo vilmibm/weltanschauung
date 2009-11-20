@@ -32,12 +32,12 @@ my $db = DBIx::Simple->connect('dbi:SQLite:dbname=:memory:', '', '');
 create_db($db) || die 'Failed to create internal database';
 
 ############ XXX things that are hardcoded for now but will be user-input later
-# my $corpus_file  = 'corborgepus';
- my $corpus_file  = 'simple_corpus';
-#my $corpus_file  = 'trivial_corpus';
-my $length       = 10;
-my $rhyme_scheme = ['A', 'B', 'C'];
-my $syll_scheme  = [5, 10, 7];
+my $corpus_file  = 'corborgepus';
+# my $corpus_file  = 'simple_corpus';
+# my $corpus_file  = 'trivial_corpus';
+my $length       = 3;
+my $rhyme_scheme = [];
+my $syll_scheme  = [5, 7];
 ############
 
 my $rule_href = {
@@ -52,22 +52,18 @@ insert_into_db($db, $profiled_aref) || die 'Failed to insert into internal datab
 
 my $rules = rules_parse($db, $rule_href); # XXX this signature will probably change
 
-my $queries = [];
-
-push @$queries, rule_to_query($_) for @$rules;
-
-my ($poem, $sentence, $sentences, $sentences_prime, $rule_prime, $query_prime);
-for my $query (@$queries) {
-    $sentences = $db->iquery($query)->hashes;
+my ($poem, $sentence, $sentences, $sentences_prime, $rule_prime);
+for my $rule (@$rules) {
+    $sentences = $db->iquery("SELECT sentence FROM lines WHERE", $rule)->flat;
     if ( not @$sentences ) {
-        $rule_prime = query_to_rule($query);
+        die; # decomposition isn't working yet, this will make an infinite loop
+        $rule_prime = $rule;
         while ( $rule_prime = decompose($rule_prime) ) {
-            $query_prime     = rule_to_query($rule_prime);
-            $sentences_prime = $db->iquery($query)->hashes;
+            $sentences_prime = $db->iquery("SELECT sentence FROM lines WHERE", $rule_prime)->flat;
             $sentences = $sentences_prime and last if @$sentences_prime;
         }
     }
-    $sentence = $sentences->[int rand];
+    $sentence = $sentences->[int rand scalar @$sentences];
     push @$poem, $sentence;            
 }
 
