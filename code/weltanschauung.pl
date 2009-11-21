@@ -35,8 +35,9 @@ create_db($db) || die 'Failed to create internal database';
 my $corpus_file  = 'corborgepus';
 # my $corpus_file  = 'simple_corpus';
 # my $corpus_file  = 'trivial_corpus';
-my $length       = 3;
-my $rhyme_scheme = [];
+my $query        = 'SELECT sentence FROM lines WHERE';
+my $length       = 6;
+my $rhyme_scheme = ['A', 'B'];
 my $syll_scheme  = [5, 7];
 ############
 
@@ -50,16 +51,16 @@ my $profiled_aref = profile(normalize(slurp($corpus_file)));
 
 insert_into_db($db, $profiled_aref) || die 'Failed to insert into internal database';
 
-my $rules = rules_parse($db, $rule_href); # XXX this signature will probably change
+my $rules = rules_parse($db, $rule_href);
 
 my ($poem, $sentence, $sentences, $sentences_prime, $rule_prime);
 for my $rule (@$rules) {
-    $sentences = $db->iquery("SELECT sentence FROM lines WHERE", $rule)->flat;
+    $sentences = $db->iquery($query, $rule)->flat;
     if ( not @$sentences ) {
-        die; # decomposition isn't working yet, this will make an infinite loop
+        #die; # decomposition isn't working yet, this will make an infinite loop
         $rule_prime = $rule;
         while ( $rule_prime = diminish($rule_prime) ) {
-            $sentences_prime = $db->iquery("SELECT sentence FROM lines WHERE", $rule_prime)->flat;
+            $sentences_prime = $db->iquery($query, $rule_prime)->flat;
             $sentences = $sentences_prime and last if @$sentences_prime;
         }
     }

@@ -10,7 +10,7 @@ use base 'Exporter';
 use warnings;
 use strict;
 
-use Storable 'dclone';
+use feature 'switch';
 
 our @EXPORT_OK = qw/
     rules_parse
@@ -63,7 +63,7 @@ sub rules_parse {
         $rule_set->{end_rhyme_sound} = $end_rhyme_sound if $end_rhyme_sound; 
         $rule_set->{num_syllables}   = $num_syllables   if $num_syllables;
 
-        push @$rules, dclone $rule_set;
+        push @$rules, $rule_set;
     }
 
     return $rules;
@@ -120,6 +120,20 @@ Returns:
 =cut
 sub diminish {
     my $rule = shift;
+
+    my $rule_to_diminish = (keys %$rule)[int rand scalar keys %$rule];
+
+    # switch structure to accomodate future, more complex rules
+    # XXX for now, it's performing the trivial operation delete $rule->{$rule_to_diminish}
+    given ($rule_to_diminish) {
+        when ('end_rhyme_sound') {
+            delete $rule->{'end_rhyme_sound'}; # harsh, I know.
+        }
+        when ('num_syllables')   { 
+            # XXX This will get complex; I'm going to make this rule range-based, not scalar based.
+            delete $rule->{'num_syllables'};
+        }
+    }
 
     return $rule;
 }
