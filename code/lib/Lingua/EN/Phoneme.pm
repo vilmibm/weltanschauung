@@ -27,6 +27,8 @@ sub DESTROY {
 sub phoneme {
     my ($self, $latin) = @_;
     
+    return '' unless exists $self->{uc $latin};
+
     if (wantarray) {
 	return split /\s+/, $self->{uc $latin};
     } else {
