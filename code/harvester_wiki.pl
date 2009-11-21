@@ -8,7 +8,8 @@
 =head1 SYNOPSIS
 
 This script harvests text from wikipedia up to a certain number of articles and
-from some URL starting point using a naiive crawling algorithm. It jams the content it finds into a text file. 
+from some URL starting point using a naiive crawling algorithm. It jams the
+content it finds into a text file. 
 
 =cut
 
@@ -31,9 +32,14 @@ GetOptions(
     'verbose'     => $verbose
 );
 
+open my $corpus_fh, '>', $corpus;
+
+my $links_seen;
+my $links_to_visit;
 my $mech = WWW::Mechanize->new();
 
 $mech->get($url);
+
 
 
 

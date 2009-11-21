@@ -38,8 +38,8 @@ my $corpus_file  = 'corborgepus';
 # my $corpus_file  = 'simple_corpus';
 # my $corpus_file  = 'trivial_corpus';
 my $query        = 'SELECT sentence FROM lines WHERE';
-my $length       = 6;
-my $rhyme_scheme = ['A', 'B'];
+my $length       = 3;
+my $rhyme_scheme = ['A'];
 my $syll_scheme  = [5, 7];
 ############
 
