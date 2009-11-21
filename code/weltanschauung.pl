@@ -24,7 +24,7 @@ use Rules qw/
     rules_parse
     rule_to_query
     query_to_rule
-    decompose
+    diminish
 /;
 
 my $db = DBIx::Simple->connect('dbi:SQLite:dbname=:memory:', '', '');
@@ -58,7 +58,7 @@ for my $rule (@$rules) {
     if ( not @$sentences ) {
         die; # decomposition isn't working yet, this will make an infinite loop
         $rule_prime = $rule;
-        while ( $rule_prime = decompose($rule_prime) ) {
+        while ( $rule_prime = diminish($rule_prime) ) {
             $sentences_prime = $db->iquery("SELECT sentence FROM lines WHERE", $rule_prime)->flat;
             $sentences = $sentences_prime and last if @$sentences_prime;
         }

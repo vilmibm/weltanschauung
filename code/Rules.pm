@@ -16,7 +16,7 @@ our @EXPORT_OK = qw/
     rules_parse
     rule_to_query
     query_to_rule
-    decompose
+    diminish
 /;
 
 =head2 rules_parse
@@ -107,9 +107,9 @@ sub query_to_rule {
     return $rule;
 }
 
-=head2 decompose
+=head2 diminish
 
-    my $weakened_rule = decompose($rule);
+    my $diminished_rule = diminish($rule);
 
 Args:
     -some rule string
@@ -118,7 +118,7 @@ Returns:
     -rule string with some property removed
 
 =cut
-sub decompose {
+sub diminish {
     my $rule = shift;
 
     return $rule;
