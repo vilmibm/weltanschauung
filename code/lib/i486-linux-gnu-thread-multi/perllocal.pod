@@ -1,0 +1,154 @@
+=head2 Fri Nov 20 21:59:40 2009: C<Module> L<Params::Util|Params::Util>
+
+=over 4
+
+=item *
+
+C<installed into: /home/nate/code/git/weltanschauung/code/lib/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.00>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Nov 20 21:59:42 2009: C<Module> L<Class::Inspector|Class::Inspector>
+
+=over 4
+
+=item *
+
+C<installed into: /home/nate/code/git/weltanschauung/code/lib/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.24>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Nov 20 21:59:44 2009: C<Module> L<File::ShareDir|File::ShareDir>
+
+=over 4
+
+=item *
+
+C<installed into: /home/nate/code/git/weltanschauung/code/lib/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.00>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Nov 20 21:59:45 2009: C<Module> L<Lingua::EN::Phoneme|Lingua::EN::Phoneme>
+
+=over 4
+
+=item *
+
+C<installed into: /home/nate/code/git/weltanschauung/code/lib/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.01>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Nov 20 22:01:04 2009: C<Module> L<Lingua::EN::Syllable|Lingua::EN::Syllable>
+
+=over 4
+
+=item *
+
+C<installed into: /home/nate/code/git/weltanschauung/code/lib/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.251>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Nov 20 22:01:55 2009: C<Module> L<Lingua::EN::Segmenter|Lingua::EN::Segmenter>
+
+=over 4
+
+=item *
+
+C<installed into: /home/nate/code/git/weltanschauung/code/lib/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.1>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Nov 20 22:03:06 2009: C<Module> L<Lingua::EN::Sentence|Lingua::EN::Sentence>
+
+=over 4
+
+=item *
+
+C<installed into: /home/nate/code/git/weltanschauung/code/lib/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.25>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
