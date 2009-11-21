@@ -69,44 +69,6 @@ sub rules_parse {
     return $rules;
 }
 
-=head2
-
-    my $query = rule_to_query($rule);
-
-Args:
-    -some rule hash
-
-Returns:
-    -equivalent query string
-
-=cut
-sub rule_to_query {
-    my $rule = shift;
-
-    my $query = '';
-
-    return $query;
-}
-
-=head2
-
-    my $rule = query_to_rule($query);
-
-Args:
-    -some query string
-
-Returns:
-    -equivalent rule string
-
-=cut
-sub query_to_rule {
-    my $query = shift;
-
-    my $rule = '';
-
-    return $rule;
-}
-
 =head2 diminish
 
     my $diminished_rule = diminish($rule);
