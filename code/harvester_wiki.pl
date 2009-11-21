@@ -34,12 +34,18 @@ GetOptions(
 
 open my $corpus_fh, '>', $corpus;
 
+my $urls;
 my $links_seen;
-my $links_to_visit;
 my $mech = WWW::Mechanize->new();
 
-$mech->get($url);
+for (1..$links_to_hit) {
+    print $corpus_fh, `w3m $url -dump`;
+    push @$links_seen, $url unless $url =~ /Random/; # we can see the Special:Random page any number of times.
 
+    $mech->get($url);
+    $urls = $mech->find_all_links(url_regex => qr//); # XXX exclude menu, footer links. hardcode?
 
+    $url = $urls->[int rand scalar @$urls];
+}
 
-
+close $corpus_fh;
