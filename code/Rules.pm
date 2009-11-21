@@ -28,7 +28,7 @@ Args:
     -rules_href derived from user input (or defaults)
 
 Returns:
-    -array ref of list of rules
+    -array ref of list of rule hashes
 
 =cut
 sub rules_parse {
@@ -74,10 +74,10 @@ sub rules_parse {
     my $diminished_rule = diminish($rule);
 
 Args:
-    -some rule string
+    -some rule hash
 
 Returns:
-    -rule string with some property removed
+    -rule hash with some key either removed or liberalized
 
 =cut
 sub diminish {

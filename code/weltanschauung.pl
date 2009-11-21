@@ -57,7 +57,6 @@ my ($poem, $sentence, $sentences, $sentences_prime, $rule_prime);
 for my $rule (@$rules) {
     $sentences = $db->iquery($query, $rule)->flat;
     if ( not @$sentences ) {
-        #die; # decomposition isn't working yet, this will make an infinite loop
         $rule_prime = $rule;
         while ( $rule_prime = diminish($rule_prime) ) {
             $sentences_prime = $db->iquery($query, $rule_prime)->flat;
