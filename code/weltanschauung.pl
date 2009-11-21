@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 # who   nate smith
 # what  implementation of Weltanschauung algorithm
 # when  Oct 09
