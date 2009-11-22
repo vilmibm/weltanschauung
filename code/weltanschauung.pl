@@ -10,6 +10,7 @@ use strict;
 use lib 'lib';
 
 use Data::Dumper; # XXX debug
+use Getopt::Long;
 
 # CPAN modules
 use File::Slurp 'slurp';
@@ -24,34 +25,90 @@ use Corpus qw/
 /;
 use Rules qw/
     rules_parse
-    rule_to_query
-    query_to_rule
     diminish
 /;
 
-my $db = DBIx::Simple->connect('dbi:SQLite:dbname=:memory:', '', '');
-
-create_db($db) || die 'Failed to create internal database';
-
-############ XXX things that are hardcoded for now but will be user-input later
-my $corpus_file  = 'corborgepus';
-# my $corpus_file  = 'simple_corpus';
-# my $corpus_file  = 'trivial_corpus';
 my $query        = 'SELECT sentence FROM lines WHERE';
-my $length       = 3;
-my $rhyme_scheme = ['A'];
-my $syll_scheme  = [5, 7];
-############
+my $db;
+my $profiled_aref;
+
+############ user args handling
+my $generate_only = 0;
+my $corpus_file;
+#my $corpus_file   = 'corborgepus';
+#my $corpus_file   = 'simple_corpus';
+#my $corpus_file   = 'trivial_corpus';
+my $db_file;
+my $rhyme_str     = '';
+my $syll_str      = "5,7";
+my $length        = 3;
+
+Getoptions(
+    'generate_only' => \$generate_only,
+    'corpus=s'      => \$corpus_file,
+    'db=s'          => \$db_file,
+    'length=i'      => \$length,
+    'rhyme=s'       => \$rhyme_str,
+    'syl=s'         => \$syll_str,
+);
+# !db,!c,!g
+#     -not allowed
+# !db,c,g
+#     -not allowed
+# db,!c,g
+#     -not allowed
+# !db,!c,g
+#     -not allowed
+if ( 
+    (!$db_file && !$corpus_file && !$generate_only) ||
+    (!$db_file &&  $corpus_file &&  $generate_only) ||
+    ( $db_file && !$corpus_file &&  $generate_only) ||
+    (!$db_file && !$corpus_file &&  $generate_only)
+) { die 'Bad arguments.' }
+
+# db,!c,!g
+#     -preload db
+if  ( $db_file && !$corpus_file && !$generate_only) {
+   $db = DBIx::Simple->connect("dbi:SQLite:dbname=$db_file", '', '');
+}
+
+# db,c,!g
+#     -generate from c, save in db
+if  ( $db_file && $corpus_file && !$generate_only) {
+    $db = DBIx::Simple->connect("dbi:SQLite:dbname=$db_file", '', '');
+    $profiled_aref = profile(normalize(slurp($corpus_file)));
+    create_db($db) || die 'Failed to create internal database'
+    insert_into_db($db, $profiled_aref) || die 'Failed to insert into internal database';
+}
+# db,c,g
+#     -generate from c, save in db, exit
+if  ( $db_file && $corpus_file && $generate_only) {
+    $db = DBIx::Simple->connect("dbi:SQLite:dbname=$db_file", '', '');
+    $profiled_aref = profile(normalize(slurp($corpus_file)));
+    create_db($db) || die 'Failed to create internal database'
+    insert_into_db($db, $profiled_aref) || die 'Failed to insert into internal database';
+    exit "db saved in $db_file";
+}
+# !db,c,!g
+#     -generate from c, save in :memory:
+if  ( !$db_file && $corpus_file && !$generate_only) {
+    $db_file = ':memory:'
+    $db = DBIx::Simple->connect("dbi:SQLite:dbname=$db_file", '', '');
+    $profiled_aref = profile(normalize(slurp($corpus_file)));
+    create_db($db) || die 'Failed to create internal database'
+    insert_into_db($db, $profiled_aref) || die 'Failed to insert into internal database';
+}
+
+#### begin.
+my ($rhyme_scheme, $syll_scheme);
+$rhyme_scheme = \(split ',', $rhyme_str);
+$syll_scheme  = \(split ',', $syll_str );
 
 my $rule_href = {
-    length       => $length       // 10,
-    rhyme_scheme => $rhyme_scheme // ['A', 'B'],
-    syll_scheme  => $syll_scheme  // [5, 10],
+    length       => $length,
+    rhyme_scheme => $rhyme_scheme,
+    syll_scheme  => $syll_scheme,
 };
-
-my $profiled_aref = profile(normalize(slurp($corpus_file)));
-
-insert_into_db($db, $profiled_aref) || die 'Failed to insert into internal database';
 
 my $rules = rules_parse($db, $rule_href);
 
