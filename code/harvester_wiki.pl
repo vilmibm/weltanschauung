@@ -21,12 +21,12 @@ use WWW::Mechanize;
 
 my $url          = 'http://en.wikipedia.org/wiki/Special:Random';
 my $links_to_hit = 10;
-my $corpus  = 'wikipedia_' . localtime() . '.txt';
-my $verbose      = 1;
+my $corpus  = 'wikipedia_' . time() . '.txt';
+my $verbose      = 0;
 
 GetOptions(
     'url=s'       => \$url,
-    'num_links=i' => \$links_to_hit,
+    'links=i' => \$links_to_hit,
     'corpus=s'    => \$corpus,
     'verbose'     => $verbose
 );
@@ -36,8 +36,9 @@ die 'Cannot write to corpus file.' unless -w $corpus_fh;
 
 say "Harvesting $links_to_hit pages from Wikipedia..." if $verbose;
 
-my ($urls, $links_seen, $text);
+my ($urls, $links_seen, $text, $count);
 my $mech = WWW::Mechanize->new();
+$mech->agent_alias( 'Windows Mozilla' ); # blocked otherwise
 
 for (1..$links_to_hit) {
     say "Fetching $url..." if $verbose;
@@ -45,14 +46,17 @@ for (1..$links_to_hit) {
 
     $text = $mech->content(format=>'text');
     say "Writing to $corpus..." if $verbose;
-    print $corpus_fh $text;
+    say $corpus_fh $text;
 
     push @$links_seen, $url unless $url =~ /Special:Random/; # we can see the Special:Random page any number of times.
 
     say 'Finding next link...' if $verbose;
     $urls = $mech->find_all_links(url_regex => qr(/wiki/\w+$)); # this will exclude anything with '.' or ':'
+    $count = 0;
     while ( $url ~~ @$links_seen ) {
+        $count++;
         $url = $urls->[int rand scalar @$urls];
+        $url = 'http://en.wikipedia.org/wiki/Special:Random' && last if $count == scalar @$urls;
     }
 }
 
