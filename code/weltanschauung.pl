@@ -33,24 +33,48 @@ my $db;
 my $profiled_aref;
 
 ############ user args handling
-my $generate_only = 0;
-my $corpus_file;
 #my $corpus_file   = 'corborgepus';
 #my $corpus_file   = 'simple_corpus';
 #my $corpus_file   = 'trivial_corpus';
+my $corpus_file;
+my $generate_only = 0;
+my $preload;
 my $db_file;
 my $rhyme_str     = '';
 my $syll_str      = "5,7";
 my $length        = 3;
 
-Getoptions(
-    'generate_only' => \$generate_only,
-    'corpus=s'      => \$corpus_file,
-    'db=s'          => \$db_file,
-    'length=i'      => \$length,
-    'rhyme=s'       => \$rhyme_str,
-    'syl=s'         => \$syll_str,
-);
+
+_handle_args();
+sub _connect_db() {
+    my $filename = shift || ':memory:';
+    return DBIx::Simple->connect("dbi:SQLite:dbname=$filename", '', '');
+}
+sub _handle_args() {
+    Getoptions(
+        'generate_only' => \$generate_only,
+        'preload'       => \$preload,
+        'corpus=s'      => \$corpus_file,
+        'db=s'          => \$db_file,
+        'length=i'      => \$length,
+        'rhyme=s'       => \$rhyme_str,
+        'syl=s'         => \$syll_str,
+    );
+    if ( $preload ) {
+        die 'Must specify DB for preload option' unless $db_file;
+        $db = _connect_db($db_file);
+        return;
+    }
+
+    $db = _connect_db();
+
+    # rest...
+}
+
+
+
+
+
 # !db,!c,!g
 #     -not allowed
 # !db,c,g
@@ -66,10 +90,13 @@ if (
     (!$db_file && !$corpus_file &&  $generate_only)
 ) { die 'Bad arguments.' }
 
-# db,!c,!g
-#     -preload db
-if  ( $db_file && !$corpus_file && !$generate_only) {
-   $db = DBIx::Simple->connect("dbi:SQLite:dbname=$db_file", '', '');
+$db_file ?
+   $db = DBIx::Simple->connect("dbi:SQLite:dbname=$db_file", '', '')
+:  $db = DBIx::Simple->connect("dbi:SQLite:dbname=:memory:", '', '')
+
+if ( $corpus_file ) {
+    $profiled_aref = profile(normalize(slurp($corpus_file)));
+
 }
 
 # db,c,!g
