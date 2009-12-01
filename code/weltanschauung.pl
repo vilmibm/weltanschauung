@@ -102,13 +102,16 @@ sub _handle_args {
         return;
     }
 
-    $db = _connect_db();
+    $db = _connect_db($db_file);
 
     $profiled_aref = profile(normalize(slurp($corpus_file)));
     create_db($db) || die 'Failed to create internal database';
     insert_into_db($db, $profiled_aref) || die 'Failed to insert into internal database';
 
-    say "db saved in $db_file" && exit if $generate_only;
+    if ( $generate_only ) {
+        say "db saved in $db_file";
+        exit;
+    }
 }
 
 END {
