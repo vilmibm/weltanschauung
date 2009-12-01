@@ -8,6 +8,7 @@
 use warnings;
 use strict;
 use lib 'lib';
+use feature ':5.10';
 
 use Data::Dumper; # XXX debug
 use Getopt::Long;
@@ -41,19 +42,19 @@ my $generate_only = 0;
 my $preload;
 my $db_file;
 my $rhyme_str     = '';
-my $syll_str      = "5,7";
+my $syll_str      = "";
 my $length        = 3;
 
 _handle_args();
 
 #### begin.
-my ($rhyme_scheme, $syll_scheme);
-my @tmp = split ',', $rhyme_str;
-$rhyme_scheme = \@tmp;
-my @tmp2 = split ',', $syll_str;
-$syll_scheme = \@tmp2;
-#$rhyme_scheme = \(split ',', $rhyme_str);
-#$syll_scheme  = \(split ',', $syll_str );
+my $rhyme_scheme = [split '',  $rhyme_str]; # eg. ABABAB
+my $syll_scheme  = [split ',', $syll_str ]; # eg. 5,7,5 
+
+use Data::Dumper;
+warn Dumper $rhyme_scheme;
+warn Dumper $syll_scheme;
+die;
 
 my $rule_href = {
     length       => $length,
@@ -110,7 +111,7 @@ sub _handle_args {
     create_db($db) || die 'Failed to create internal database';
     insert_into_db($db, $profiled_aref) || die 'Failed to insert into internal database';
 
-    exit "db saved in $db_file" if $generate_only;
+    say "db saved in $db_file" && exit if $generate_only;
 }
 
 END {
