@@ -94,6 +94,8 @@ sub _handle_args {
         'syl=s'         => \$syll_str,
     );
 
+    $length = length $rhyme_str if length $rhyme_str > $length;
+
     if ( $preload ) {
         die 'Must specify DB for preload option' unless $db_file;
         $db = _connect_db($db_file);
