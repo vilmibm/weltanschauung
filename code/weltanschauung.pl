@@ -51,11 +51,6 @@ _handle_args();
 my $rhyme_scheme = [split '',  $rhyme_str]; # eg. ABABAB
 my $syll_scheme  = [split ',', $syll_str ]; # eg. 5,7,5 
 
-use Data::Dumper;
-warn Dumper $rhyme_scheme;
-warn Dumper $syll_scheme;
-die;
-
 my $rule_href = {
     length       => $length,
     rhyme_scheme => $rhyme_scheme,
