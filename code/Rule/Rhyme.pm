@@ -24,9 +24,21 @@ sub get_clause {
     my $sound = $self->{sound};
 
     given ($self->get_weakness()) {
-        when (3) { return '(1)' }
-        when (2) { return '(1)' }
-        when (1) { return '(1)' }
+        when (3) { return "(end_rhyme_sound=$sound)"; }
+        when (2) { 
+            my $weak_sound = $sound;
+            $weak_sound =~ s/0/1/ if $sound =~ m/0/;
+            $weak_sound =~ s/1/2/ if $sound =~ m/1/;
+            $weak_sound =~ s/2/0/ if $sound =~ m/2/;
+            return "(end_rhyme_sound=$weak_sound)";
+        }
+        when (1) { 
+            my $weak_sound = $sound;
+            $weak_sound =~ s/0/2/ if $sound =~ m/0/;
+            $weak_sound =~ s/1/0/ if $sound =~ m/1/;
+            $weak_sound =~ s/2/1/ if $sound =~ m/2/;
+            return "(end_rhyme_sound=$weak_sound)";
+        }
         when (0) { return '(1)' }
     }
 }
