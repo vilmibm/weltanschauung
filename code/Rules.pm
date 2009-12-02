@@ -13,7 +13,7 @@ use strict;
 use feature 'switch';
 
 use Rule::Syllable;
-# XXX use Rule::Rhyme;
+use Rule::Rhyme;
 
 our @EXPORT_OK = qw/
     rules_parse
@@ -71,7 +71,7 @@ sub rules_parse {
         $num_syllables   = $syll_scheme->[$index % (scalar @$syll_scheme)]
             if scalar @$syll_scheme;
 
-# XXX   push @$rule_set,    Rule::Rhyme->new($end_rhyme_sound) if $end_rhyme_sound;
+        push @$rule_set,    Rule::Rhyme->new($end_rhyme_sound) if $end_rhyme_sound;
         push @$rule_set, Rule::Syllable->new($num_syllables  ) if $num_syllables;
 
         push @$rule_sets, $rule_set;
@@ -135,7 +135,7 @@ Returns:
 sub _random_rhyme_sound {
     my $db = shift;
 
-    my $sounds_aref = $db->iquery('SELECT end_rhyme_sound FROM lines')->flat;
+    my $sounds_aref = $db->query('SELECT end_rhyme_sound FROM lines')->flat;
 
     return $sounds_aref->[int rand (scalar @$sounds_aref)];
 }
