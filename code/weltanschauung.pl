@@ -9,6 +9,7 @@ use warnings;
 use strict;
 use lib 'lib';
 use feature ':5.10';
+use List::Util 'max';
 
 use Data::Dumper; # XXX debug
 use Getopt::Long;
@@ -26,6 +27,7 @@ use Corpus qw/
 /;
 use Rules qw/
     rules_parse
+    rule_set_to_query
     weaken_rule_set
 /;
 
@@ -48,14 +50,16 @@ my $length        = 3;
 
 my $rule_sets = rules_parse($db, _handle_args());
 
-my ($query, $poem, $sentence, $sentences, $sentences_prime, $rule_prime);
+my ($query, $poem, $sentence, $sentences, $sentences_prime, $rule_set_prime);
 for my $rule_set (@$rule_sets) {
     $query = rule_set_to_query($rule_set);
+    warn Dumper $query;
     $sentences = $db->query($query)->flat;
     if ( not @$sentences ) {
         $rule_set_prime = [@$rule_set];
         while ( $rule_set_prime = weaken_rule_set($rule_set_prime) ) {
             $query = rule_set_to_query($rule_set_prime);
+            warn Dumper $query;
             $sentences_prime = $db->query($query)->flat;
             $sentences = $sentences_prime and last if @$sentences_prime;
         }
@@ -85,8 +89,6 @@ sub _handle_args {
         'syll=s'        => \$syll_str,
     );
 
-    $length = length $rhyme_str if length $rhyme_str > $length;
-
     if ( $preload ) {
         die 'Must specify DB for preload option' unless $db_file;
         $db = _connect_db($db_file);
@@ -104,10 +106,15 @@ sub _handle_args {
         exit;
     }
 
+    my $rhyme_scheme = [split '',  $rhyme_str]; # eg. ABABAB
+    my $syll_scheme  = [split ',', $syll_str ]; # eg. 5,7,5 
+    
+    $length = max($length, scalar @$rhyme_scheme, scalar @$syll_scheme);
+
     return {
         length       => $length,
-        rhyme_scheme => [split '',  $rhyme_str]; # eg. ABABAB
-        syll_scheme  => [split ',', $syll_str ]; # eg. 5,7,5 
+        rhyme_scheme => $rhyme_scheme,
+        syll_scheme  => $syll_scheme
     };
 }
 

@@ -27,7 +27,7 @@ sub get_weakness {
 
 sub weaken {
     my $self = shift;
-    $self->{weaken} = $self->get_weakness() - 1 unless $self->get_weakness() == 0;
+    $self->{weakness} = $self->get_weakness() - 1 unless $self->get_weakness() == 0;
 }
 
 # functions that will be overwritten in subclasses

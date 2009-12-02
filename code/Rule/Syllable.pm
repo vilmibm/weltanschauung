@@ -7,10 +7,13 @@ use warnings;
 use feature 'switch';
 
 sub new {
-    my $self = SUPER::new();
+    my $class = shift;
+    my $self  = {};
 
     $self->{num_syll} = shift || die 'must pass a syll count';
-    $self->{weaken}   = 3;
+    $self->{weakness}   = 3;
+
+    bless $self, $class;
 
     return $self;
 }

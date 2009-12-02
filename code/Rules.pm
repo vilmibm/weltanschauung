@@ -93,7 +93,7 @@ Returns:
 sub rule_set_to_query {
     my $rule_set = shift;
     my $query    = $QUERY;
-    
+
     my @clauses;
     push @clauses, $_->get_clause() for @$rule_set;
 
