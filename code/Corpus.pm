@@ -11,6 +11,7 @@ use base 'Exporter';
 
 # CPAN modules
 use Perl6::Junction 'any';
+use List::Util 'first';
 #use List::Util 'reduce';
 use Lingua::EN::Sentence qw/
     get_sentences
@@ -220,10 +221,14 @@ sub _find_rhyme_sound {
     my $num_phons = scalar @phons;
 
     return pop @phons if scalar @phons == any(1,2);
+    
+    my @ret;
+    for my $phon (reverse @phons) {
+        unshift @ret, $phon if length $phon == 1;
+        unshift @ret, $phon && last if length $phon > 1;
+    }
 
-    return join '', @phons[-3,-2,-1] if $phons[-1] eq 'S';
-
-    return join '', @phons[-2,-1];
+    return join '', @ret;
 }
 
 1
