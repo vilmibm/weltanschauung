@@ -224,8 +224,8 @@ sub _find_rhyme_sound {
     
     my @ret;
     for my $phon (reverse @phons) {
-        unshift @ret, $phon if length $phon == 1;
-        unshift @ret, $phon && last if length $phon > 1;
+        unshift( @ret, $phon )         if length $phon == 1;
+        unshift( @ret, $phon ) && last if length $phon > 1;
     }
 
     return join '', @ret;
