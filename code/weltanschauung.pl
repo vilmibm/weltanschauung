@@ -86,7 +86,7 @@ sub _handle_args {
         'db=s'          => \$db_file,
         'length=i'      => \$length,
         'rhyme=s'       => \$rhyme_str,
-        'syll=s'        => \$syll_str,
+        'syllables=s'        => \$syll_str,
     );
 
     if ( $preload ) {
