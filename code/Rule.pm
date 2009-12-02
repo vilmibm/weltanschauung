@@ -13,7 +13,6 @@ sub new {
     my $class = shift;
     my $self  = {
         weakness  => 0,
-        bind_vars => {}
     };
 
     bless($self, $class);
@@ -26,25 +25,17 @@ sub get_weakness {
     return $self->{weakness};
 }
 
-sub get_bind_vars {
+sub weaken {
     my $self = shift;
-    return $self->{bind_vars};
+    $self->{weaken} = $self->get_weakness() - 1 unless $self->get_weakness() == 0;
 }
 
 # functions that will be overwritten in subclasses
-# They are here as a guide
 sub get_clause {
     my $self = shift;
     given ($self->get_weakness()) {
         when (0) { return '(1)' }
     }
 }
-
-sub weaken {
-    my $self = shift;
-    $self->{weaken} = $self->get_weakness() - 1 unless $self->get_weakness() == 0;
-    # do something with bind_vars
-}
-
 
 1;
