@@ -26,7 +26,7 @@ sub DESTROY {
 
 sub phoneme {
     my ($self, $latin) = @_;
-    
+
     return '' unless exists $self->{uc $latin};
 
     if (wantarray) {

@@ -40,7 +40,6 @@ my $profiled_aref;
 #my $corpus_file   = 'trivial_corpus';
 my $corpus_file;
 my $generate_only = 0;
-my $dups          = 0;
 my $preload       = 0;
 my $db_file;
 my $rhyme_str     = '';
@@ -54,20 +53,12 @@ my $rule_sets = rules_parse($db, _handle_args());
 my ($query, $poem, $sentence, $sentences, $sentences_prime, $rule_set_prime);
 for my $rule_set (@$rule_sets) {
     $query = rule_set_to_query($rule_set);
-    unless ($dups) {
-        my @tmp = map {"'$_'"} @$poem;
-        $query .= 'AND sentence NOT IN (' . join(',', @tmp) . ')';
-    }
     warn Dumper $query;
     $sentences = $db->query($query)->flat;
     if ( not @$sentences ) {
         $rule_set_prime = [@$rule_set];
         while ( $rule_set_prime = weaken_rule_set($rule_set_prime) ) {
             $query = rule_set_to_query($rule_set_prime);
-            unless ($dups) {
-                my @tmp = map {"'$_'"} @$poem;
-                $query .= 'AND sentence NOT IN (' . join(',', @tmp) . ')';
-            }
             warn Dumper $query;
             $sentences_prime = $db->query($query)->flat;
             $sentences = $sentences_prime and last if @$sentences_prime;
@@ -94,7 +85,6 @@ sub _handle_args {
         'corpus=s'      => \$corpus_file,
         'db=s'          => \$db_file,
         'length=i'      => \$length,
-        'duplicates'    => \$dups,
         'rhyme=s'       => \$rhyme_str,
         'syllables=s'   => \$syll_str,
     );
