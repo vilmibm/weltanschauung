@@ -71,8 +71,8 @@ sub rules_parse {
         $num_syllables   = $syll_scheme->[$index % (scalar @$syll_scheme)]
             if scalar @$syll_scheme;
 
-        push @$rule_set,    Rule::Rhyme->new($end_rhyme_sound) if $end_rhyme_sound;
-        push @$rule_set, Rule::Syllable->new($num_syllables  ) if $num_syllables;
+        push @$rule_set, Rule::Rhyme->new($end_rhyme_sound ) if $end_rhyme_sound;
+        push @$rule_set, Rule::Syllable->new($num_syllables) if $num_syllables;
 
         push @$rule_sets, $rule_set;
     }
