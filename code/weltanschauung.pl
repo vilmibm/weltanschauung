@@ -26,7 +26,7 @@ use Corpus qw/
 /;
 use Rules qw/
     rules_parse
-    diminish
+    weaken_rule_set
 /;
 
 my $db;
