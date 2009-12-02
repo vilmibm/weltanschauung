@@ -82,7 +82,7 @@ sub _handle_args {
         'db=s'          => \$db_file,
         'length=i'      => \$length,
         'rhyme=s'       => \$rhyme_str,
-        'syl=s'         => \$syll_str,
+        'syll=s'         => \$syll_str,
     );
 
     $length = length $rhyme_str if length $rhyme_str > $length;
