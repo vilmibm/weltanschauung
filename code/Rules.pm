@@ -12,23 +12,27 @@ use strict;
 
 use feature 'switch';
 
+use Rule::Syllable;
+# XXX use Rule::Rhyme;
+
 our @EXPORT_OK = qw/
     rules_parse
-    rule_to_query
-    query_to_rule
-    diminish
+    rule_set_to_query
+    weaken_rule_set
 /;
+
+my $QUERY        = 'SELECT sentence FROM lines WHERE';
 
 =head2 rules_parse
     
-    my $rules_aref = rules_parse($rules_href);
+    my $rule_sets_aref = rules_parse($db, $rules_href);
 
 Args:
     -database (DBIx::Simple) handle
     -rules_href derived from user input (or defaults)
 
 Returns:
-    -array ref of list of rule hashes
+    -array ref of list of rule_sets (which are in turn refs of lists of rule objs)
 
 =cut
 sub rules_parse {
@@ -38,7 +42,7 @@ sub rules_parse {
     my $length       = $input->{'length'    };
     my $rhyme_scheme = $input->{rhyme_scheme}; # list of letters
     my $syll_scheme  = $input->{syll_scheme };
-    my $rules = [];
+    my $rule_sets = [];
 
     my ($rhyme_href, $rand_sound); # hash of letter->sound (string)
     for my $letter ( @$rhyme_scheme ) {
@@ -49,55 +53,72 @@ sub rules_parse {
         }
     }
 
+    # at this point we have the information needed to build this structure:
+    # rule_sets = [
+    #   [RuleObj, RuleObj, RuleObj,...], # a rule set
+    #   [RuleObj, RuleObj, RuleObj,...],
+    #   [RuleObj, RuleObj, RuleObj,...]
+    # ]
+
     my ($rule_set, $rhyme_letter, $end_rhyme_sound, $num_syllables);
-    for my $index (0 .. $length - 1) { # come up with rule list for this line of poem
+    for my $index (0 .. $length - 1) { # come up with rule_set for this line of poem
         undef $num_syllables; undef $end_rhyme_sound;
-
-        $rule_set = {};
-
+        
+        $rule_set = [];
+        
         $end_rhyme_sound = $rhyme_href->{$rhyme_scheme->[$index % (scalar @$rhyme_scheme)]}
             if scalar @$rhyme_scheme;
         $num_syllables   = $syll_scheme->[$index % (scalar @$syll_scheme)]
             if scalar @$syll_scheme;
-       
-        $rule_set->{end_rhyme_sound} = $end_rhyme_sound if $end_rhyme_sound; 
-        $rule_set->{num_syllables}   = $num_syllables   if $num_syllables;
 
-        push @$rules, $rule_set;
+# XXX   push @$rule_set,    Rule::Rhyme->new($end_rhyme_sound) if $end_rhyme_sound;
+        push @$rule_set, Rule::Syllable->new($num_syllables  ) if $num_syllables;
+
+        push @$rule_sets, $rule_set;
     }
 
-    return $rules;
+    return $rule_sets;
 }
+=head2
 
-=head2 diminish
-
-    my $diminished_rule = diminish($rule);
+    my $query = rule_set_to_query($rule_set);
 
 Args:
-    -some rule hash
-
+    -some list of rule objects
 Returns:
-    -rule hash with some key either removed or liberalized
+    -equivalent query string
 
 =cut
-sub diminish {
-    my $rule = shift;
 
-    my $rule_to_diminish = (keys %$rule)[int rand scalar keys %$rule];
+sub rule_set_to_query {
+    my $rule_set = shift;
+    my $query    = $QUERY;
+    
+    my @clauses;
+    push @clauses, $_->get_clause() for @$rule_set;
 
-    # switch structure to accomodate future, more complex rules
-    # XXX for now, it's performing the trivial operation delete $rule->{$rule_to_diminish}
-    given ($rule_to_diminish) {
-        when ('end_rhyme_sound') {
-            delete $rule->{'end_rhyme_sound'}; # harsh, I know.
-        }
-        when ('num_syllables')   { 
-            # XXX This will get complex; I'm going to make this rule range-based, not scalar based.
-            delete $rule->{'num_syllables'};
-        }
-    }
+    $query .= join 'AND', @clauses;
 
-    return $rule;
+    return $query;
+}
+
+=head2 weaken_rule_set
+
+    my $weakened_rule_set = weaken_rule_set($rule_set);
+
+Args:
+    -some list of rule objects
+
+Returns:
+    -same list with some random rule object's weaken called
+
+=cut
+sub weaken_rule_set {
+    my $rule_set = shift;
+    
+    $rule_set->[int rand scalar @$rule_set]->weaken();
+
+    return $rule_set;
 }
 
 =head2 _random_rhyme_sound

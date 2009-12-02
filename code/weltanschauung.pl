@@ -29,7 +29,6 @@ use Rules qw/
     diminish
 /;
 
-my $query        = 'SELECT sentence FROM lines WHERE';
 my $db;
 my $profiled_aref;
 
@@ -45,27 +44,19 @@ my $rhyme_str     = '';
 my $syll_str      = "";
 my $length        = 3;
 
-_handle_args();
-
 #### begin.
-my $rhyme_scheme = [split '',  $rhyme_str]; # eg. ABABAB
-my $syll_scheme  = [split ',', $syll_str ]; # eg. 5,7,5 
 
-my $rule_href = {
-    length       => $length,
-    rhyme_scheme => $rhyme_scheme,
-    syll_scheme  => $syll_scheme,
-};
+my $rule_sets = rules_parse($db, _handle_args());
 
-my $rules = rules_parse($db, $rule_href);
-
-my ($poem, $sentence, $sentences, $sentences_prime, $rule_prime);
-for my $rule (@$rules) {
-    $sentences = $db->iquery($query, $rule)->flat;
+my ($query, $poem, $sentence, $sentences, $sentences_prime, $rule_prime);
+for my $rule_set (@$rule_sets) {
+    $query = rule_set_to_query($rule_set);
+    $sentences = $db->query($query)->flat;
     if ( not @$sentences ) {
-        $rule_prime = $rule;
-        while ( $rule_prime = diminish($rule_prime) ) {
-            $sentences_prime = $db->iquery($query, $rule_prime)->flat;
+        $rule_set_prime = [@$rule_set];
+        while ( $rule_set_prime = weaken_rule_set($rule_set_prime) ) {
+            $query = rule_set_to_query($rule_set_prime);
+            $sentences_prime = $db->query($query)->flat;
             $sentences = $sentences_prime and last if @$sentences_prime;
         }
     }
@@ -75,7 +66,7 @@ for my $rule (@$rules) {
 
 print $_, "\n" for @$poem;
 
-# done.
+#### done.
 
 # functions
 sub _connect_db {
@@ -112,6 +103,12 @@ sub _handle_args {
         say "db saved in $db_file";
         exit;
     }
+
+    return {
+        length       => $length,
+        rhyme_scheme => [split '',  $rhyme_str]; # eg. ABABAB
+        syll_scheme  => [split ',', $syll_str ]; # eg. 5,7,5 
+    };
 }
 
 END {
