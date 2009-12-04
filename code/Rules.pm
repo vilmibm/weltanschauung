@@ -14,8 +14,8 @@ use feature 'switch';
 
 use Rule::Syllable;
 use Rule::Rhyme;
-#use Rule::Keyword::Exact;
-#use Rule::Keyword::Fuzzy;
+use Rule::Keyword::Exact;
+use Rule::Keyword::Fuzzy;
 
 our @EXPORT_OK = qw/
     rules_parse
@@ -64,7 +64,7 @@ sub rules_parse {
     #   [RuleObj, RuleObj, RuleObj,...]
     # ]
 
-    my ($rule_set, $rhyme_letter, $end_rhyme_sound, $num_syllables);
+    my ($rule_set, $rhyme_letter, $end_rhyme_sound, $num_syllables, $exact_keyword, $fuzzy_keyword);
     for my $index (0 .. $length - 1) { # come up with rule_set for this line of poem
         undef $num_syllables; undef $end_rhyme_sound;
         
@@ -81,8 +81,8 @@ sub rules_parse {
 
         push @$rule_set, Rule::Rhyme->new($end_rhyme_sound ) if $end_rhyme_sound;
         push @$rule_set, Rule::Syllable->new($num_syllables) if $num_syllables;
-        #push @$rule_set, Rule::Keyword::Exact->new($exact_keyword) if $exact_keyword;
-        #push @$rule_set, Rule::Keyword::Fuzzy->new($fuzzy_keyword) if $fuzzy_keyword;
+        push @$rule_set, Rule::Keyword::Exact->new($exact_keyword) if $exact_keyword;
+        push @$rule_set, Rule::Keyword::Fuzzy->new($fuzzy_keyword) if $fuzzy_keyword;
 
         push @$rule_sets, $rule_set;
     }
