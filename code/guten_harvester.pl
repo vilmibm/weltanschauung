@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 use strict;
 use warnings;
 
@@ -10,7 +11,7 @@ my $browse = 'http://www.gutenberg.org/browse/authors/';
 my $book_page   = 'http://www.gutenberg.org/etext/';
 my $english_books;
 
-for my $letter ('a'..'z') {
+for my $letter ('a'..'c') {
     $mech->get($browse.$letter);
     my $content = $mech->content();
 
@@ -19,11 +20,22 @@ for my $letter ('a'..'z') {
     }
 }
 
-my $corpus = '';
+my $num_books = scalar @$english_books;
+print "Found $num_books english books\n";
 
+my $corpus = '';
+my $file = 'guten_'.time().'.txt';
+open my $fh, '>', $file;
+
+my $count = 0;
 for my $book (@$english_books) {
+    print "Fetching book $count of $num_books\n";
+    $count++;
     $mech->get($book_page.$book);
-    $mech->follow_link(url_regex=>qr(/files/$book/$book.txt$));
+    my $link = $mech->find_link(url_regex=>qr(/files/$book/$book.txt$));
+    print "Cannot find plain text, skipping...\n" && next unless $link; 
+    
+    $mech->get($link->url());
 
     my $book_text = $mech->content();
 
@@ -32,9 +44,18 @@ for my $book (@$english_books) {
 
     $corpus .= $book_text;
 
-    last;
+    # to prevent overloading memory
+    if ( $count % 200 == 0 || $count == $num_books ) {
+        print "Dumping to $file...\n";
+        print $fh $corpus;
+        $corpus = '';
+    }
+
 }
 
-my $file = 'guten_'.time().'.txt';
-open my $fh, '>', $file;
-print $fh $corpus;
+close $fh;
+
+END { 
+    print $fh $corpus if ($count != $num_books);
+    print "Wrote corpus in $file.\n";
+}
