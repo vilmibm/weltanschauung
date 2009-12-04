@@ -30,8 +30,8 @@ sub get_clause {
             continue unless $type eq 'exact';
             return "(sentence LIKE '%$keyword%')";
         }
-        when ([1..10]) {
-            my $range = 11 - $_;
+        when ([1..11]) {
+            my $range = 12 - $_;
             return "(
                 line_no IN (
                     SELECT line_no
