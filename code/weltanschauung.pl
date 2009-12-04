@@ -43,7 +43,9 @@ my $generate_only = 0;
 my $preload       = 0;
 my $db_file;
 my $rhyme_str     = '';
-my $syll_str      = "";
+my $syll_str      = '';
+my $exact_keyword_str = '';
+my $fuzzy_keyword_str = '';
 my $length        = 3;
 
 #### begin.
@@ -87,6 +89,8 @@ sub _handle_args {
         'length=i'      => \$length,
         'rhyme=s'       => \$rhyme_str,
         'syllables=s'   => \$syll_str,
+        'exact_keyword=s' => \$exact_keyword_str,
+        'fuzzy_keyword=s' => \$fuzzy_keyword_str,
     );
 
     if ( $preload ) {
@@ -108,13 +112,17 @@ sub _handle_args {
 
     my $rhyme_scheme = [split '',  $rhyme_str]; # eg. ABABAB
     my $syll_scheme  = [split ',', $syll_str ]; # eg. 5,7,5 
+    my $ex_key_scheme= [split ',', $exact_keyword_str ]; # eg iraq war, perl, china
+    my $fz_key_scheme= [split ',', $fuzzy_keyword_str ]; # eg iraq war, perl, china
     
-    $length = max($length, scalar @$rhyme_scheme, scalar @$syll_scheme);
+    $length = max($length, scalar @$rhyme_scheme, scalar @$syll_scheme, scalar @$ex_key_scheme, scalar @$fz_key_scheme);
 
     return {
         length       => $length,
         rhyme_scheme => $rhyme_scheme,
-        syll_scheme  => $syll_scheme
+        syll_scheme  => $syll_scheme,
+        fuzzy_scheme => $fz_key_scheme,
+        exact_scheme => $ex_key_scheme,
     };
 }
 
