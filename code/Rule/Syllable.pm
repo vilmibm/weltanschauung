@@ -24,9 +24,11 @@ sub get_clause {
     my $num_syll = $self->{num_syll};
 
     given ($self->get_weakness()) {
-        when (3) { return "(num_syllables IN ($num_syll)               )" }
-        when (2) { return "(num_syllables IN ($num_syll-1, $num_syll+1))" }
-        when (1) { return "(num_syllables IN ($num_syll-2, $num_syll+2))" }
+        when (4) { return "(num_syllables = $num_syll)" }
+        when ([1..3]) {
+            my $range = 4 - $_;
+            return "(num_syllables BETWEEN $num_syll-$range AND $num_syll+$range)"
+        }
         when (0) { return '(1)' }
     }
 }
