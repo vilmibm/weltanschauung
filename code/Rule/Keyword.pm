@@ -1,6 +1,5 @@
-package Rule::Keyword::Exact;
+package Rule::Keyword;
 use base 'Rule';
-
 
 use strict;
 use warnings;
@@ -12,6 +11,7 @@ sub new {
     my $self  = {};
 
     $self->{keyword}  = shift || die 'must pass a keyword';
+    $self->{type}     = shift || 'fuzzy';
     $self->{weakness} = 11;
 
     bless $self, $class;
@@ -23,10 +23,14 @@ sub get_clause {
     my $self = shift;
 
     my $keyword = $self->{keyword};
+    my $type    = $self->{type};
 
     given ($self->get_weakness()) {
-        when (11) { return "(sentence LIKE '%$keyword%')" }
-        when (1..10) {
+        when (11) {
+            continue unless $type eq 'exact';
+            return "(sentence LIKE '%$keyword%')";
+        }
+        when ([1..10]) {
             my $range = 11 - $_;
             return "(line_no in (SELECT line_no+$range, line_no-$range FROM lines WHERE sentence LIKE '%$keyword%'))";
         }

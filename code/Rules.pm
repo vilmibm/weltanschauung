@@ -14,8 +14,7 @@ use feature 'switch';
 
 use Rule::Syllable;
 use Rule::Rhyme;
-use Rule::Keyword::Exact;
-use Rule::Keyword::Fuzzy;
+use Rule::Keyword;
 
 our @EXPORT_OK = qw/
     rules_parse
@@ -81,8 +80,8 @@ sub rules_parse {
 
         push @$rule_set, Rule::Rhyme->new($end_rhyme_sound ) if $end_rhyme_sound;
         push @$rule_set, Rule::Syllable->new($num_syllables) if $num_syllables;
-        push @$rule_set, Rule::Keyword::Exact->new($exact_keyword) if $exact_keyword;
-        push @$rule_set, Rule::Keyword::Fuzzy->new($fuzzy_keyword) if $fuzzy_keyword;
+        push @$rule_set, Rule::Keyword->new($exact_keyword, 'exact') if $exact_keyword;
+        push @$rule_set, Rule::Keyword->new($fuzzy_keyword, 'fuzzy') if $fuzzy_keyword;
 
         push @$rule_sets, $rule_set;
     }
