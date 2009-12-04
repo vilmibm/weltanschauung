@@ -14,6 +14,8 @@ use feature 'switch';
 
 use Rule::Syllable;
 use Rule::Rhyme;
+#use Rule::Keyword::Exact;
+#use Rule::Keyword::Fuzzy;
 
 our @EXPORT_OK = qw/
     rules_parse
@@ -42,6 +44,8 @@ sub rules_parse {
     my $length       = $input->{'length'    };
     my $rhyme_scheme = $input->{rhyme_scheme}; # list of letters
     my $syll_scheme  = $input->{syll_scheme };
+    my $fuzzy_scheme = $input->{fuzzy_scheme};
+    my $exact_scheme = $input->{exact_scheme};
     my $rule_sets = [];
 
     my ($rhyme_href, $rand_sound); # hash of letter->sound (string)
@@ -70,9 +74,15 @@ sub rules_parse {
             if scalar @$rhyme_scheme;
         $num_syllables   = $syll_scheme->[$index % (scalar @$syll_scheme)]
             if scalar @$syll_scheme;
+        $exact_keyword   = $exact_scheme->[$index % (scalar @$exact_scheme)]
+            if scalar @$exact_scheme;
+        $fuzzy_keyword   = $fuzzy_scheme->[$index % (scalar @$fuzzy_scheme)]
+            if scalar @$fuzzy_scheme;
 
         push @$rule_set, Rule::Rhyme->new($end_rhyme_sound ) if $end_rhyme_sound;
         push @$rule_set, Rule::Syllable->new($num_syllables) if $num_syllables;
+        #push @$rule_set, Rule::Keyword::Exact->new($exact_keyword) if $exact_keyword;
+        #push @$rule_set, Rule::Keyword::Fuzzy->new($fuzzy_keyword) if $fuzzy_keyword;
 
         push @$rule_sets, $rule_set;
     }
