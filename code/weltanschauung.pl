@@ -29,8 +29,7 @@ use Rules qw/
     weaken_rule_set
 /;
 
-my $db;
-my $profiled_aref;
+my $DB; # global.
 
 ############ user args handling
 #my $corpus_file   = 'corborgepus';
@@ -48,19 +47,19 @@ my $length        = 3;
 
 #### begin.
 
-my $rule_sets = rules_parse($db, _handle_args());
+my $rule_sets = rules_parse($DB, _handle_args());
 
 my ($query, $poem, $sentence, $sentences, $sentences_prime, $rule_set_prime);
 for my $rule_set (@$rule_sets) {
     $query = rule_set_to_query($rule_set);
     warn Dumper $query;
-    $sentences = $db->query($query)->flat;
+    $sentences = $DB->query($query)->flat;
     if ( not @$sentences ) {
         $rule_set_prime = [@$rule_set];
         while ( $rule_set_prime = weaken_rule_set($rule_set_prime) ) {
             $query = rule_set_to_query($rule_set_prime);
             warn Dumper $query;
-            $sentences_prime = $db->query($query)->flat;
+            $sentences_prime = $DB->query($query)->flat;
             $sentences = $sentences_prime and last if @$sentences_prime;
         }
     }
@@ -108,14 +107,14 @@ sub _handle_args {
 
     if ( $preload ) {
         die 'Must specify DB for preload option' unless $db_file;
-        $db = _connect_db($db_file) || die 'Failed to connect to DB';
+        $DB = _connect_db($db_file) || die 'Failed to connect to DB';
         return $rules_href;
     }
 
-    $db = _connect_db($db_file) || die 'Faild to connect to DB';
+    $DB = _connect_db($db_file) || die 'Faild to connect to DB';
 
-    create_schema($db)                || die 'Failed to create db schema';
-    insert_into_db($db, $corpus_file) || die 'Failed to insert into internal database';
+    create_schema($DB)                || die 'Failed to create db schema';
+    insert_into_db($DB, $corpus_file) || die 'Failed to insert into internal database';
 
     if ( $generate_only ) {
         say "db saved in $db_file";
@@ -126,5 +125,5 @@ sub _handle_args {
 }
 
 END {
-    $db->disconnect(); # a warning is thrown about active handles, a recognized bug in DBD::SQLite
+    $DB->disconnect(); # a warning is thrown about active handles, a recognized bug in DBD::SQLite
 }

@@ -35,7 +35,7 @@ our @EXPORT_OK = qw/
 
     my $success = create_schema()
 
-Create an in-RAM db for storing and retrieving lines
+Create an in-ram or a file based db for storing and retrieving lines
 
 Args:
     -$dbh DBIx::Interp handle
@@ -78,15 +78,18 @@ sub insert_into_db {
     open my $fh, '<', $corpus;
 
     my ($num_syllables, $words, $sentence, $sentences);
+    my $chunk_size    = 10000;
     my $rows_inserted = 0;
     my $line_no       = 0;
     my $buffer        = '';
     my @last_word_phonemes;
 
-    while ( read $fh, $buffer, 5000 ) {
+    my $read = 0;
+    while ( $read = read $fh, $buffer, $chunk_size ) {
+        print "read $read bytes...\n";
         # normalize step
         $buffer =~ s/^(.*)[^.]$/$1\./;
-        $buffer =~ s/\n//;
+        $buffer =~ s/\n//s;
         $sentences = get_sentences($buffer);
         for $sentence ( @$sentences ) {
             # profile step
