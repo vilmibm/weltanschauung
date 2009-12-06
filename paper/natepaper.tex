@@ -36,7 +36,119 @@ poetry landscape. Finally, opportunities for further research are discussed.
 \section{Background and Motivation}
 \subsection{Two Categories}
 \subsection{Existing Research}
+My research into existing work in the field of computer poetry revealed two
+general categories of techniques; one, I called \emp{Generative} and the other,
+\emp{Templatized}. The former category relies on some input text and an
+algorithm to produce new works, while the latter relies on a pre-defined
+grammatical (or semantic) template to produce work from scratch (in other
+words, without any input text).  
+
+The earliest forms of computer poetry were Templatized attempts. One, RACTER,
+used on very complex and human written templates which were populated randomly
+by a computer. Essentially, RACTER resembled the popular game Mad Libs; the
+templates had slots for nouns, verbs, and adjectives and the computer simply
+pulled from words lists to fill them \cite{Hart96}.
+
+A recent, and more advanced Templatized technique was the subject of the
+dissertation of \cite{Manurung03}. Contained within a software package called
+McGonagall, this technique stores "templates" in the form of Lexicalized Tree
+Adjoining Grammars. In other words, instead of storing hardcoded grammatical
+structures, a collection of LTAGs representing words and their semantics, part
+of speech, and phonetic attributes are used to evolve candidate poetic works.
+These works are evaluated by functions that check for certain poetic features
+(like rhyming and alliteration) and final "solutions" are presented to the
+user.
+
+An early and basic Generative approach is the Travesty Engine discussed in
+\cite{Hart96}. This technique accepted an input text and reorganized it using a
+Markov chain (a random generative process in which future states are selected
+based only on the present state of the generation). Given some $n$, the
+Travesty Engine reassembled an input text $t$ such that the result, $s$,
+contained all the same $n$ length substrings in $t$. At $n = 1$ the program
+simply shuffled the letters of $t$; but at about $n = 9$, $t$ begins to
+resemble a grammatically correct rearrangment of the phrases in $s$. Thus, for
+varying levels of $n$, new poetry could be produced from any input and this
+basic algorithm without the need for any kind of external lexicon.
+
+A recent technique, and one closest to the technique I will be proposing, uses
+Vector Space Modeling to produce Haiku using content found on blogs throughout
+the Internet \cite{Wong08}. This method produces modern (in other words, not
+strictly 5-7-5) Haiku poems using randomly accessed blog content. 
+
+Before any utilization of blog data is used, a keyword lexicon is first built
+using common Haiku terms. Using this lexicon, HTML output from a blog search
+engine is parsed and sentences containing lexicon words are extracted and
+converted into fragments according to English grammatical rules. Finally, longer
+fragments are filtered out of the repository leaving only fragments of a length
+suitable for use in Haiku.
+
+Three keywords are randomly picked from the lexicon and used to further narrow
+the sentence repository. The remaining fragments are then run through an
+analysis stage in which sentence pairs are picked based on a vector
+representation of their semantic similarity. Finally, the 'best' three lines
+are picked for the final Haiku, each one semantically involving one of the
+three random keywords originally picked.
 \subsection{Analysis}
+\subsection{Motivation}
+Throughout the course of my research it became evident that a common problem in
+computer poetry was simply the question: Why? Templatized techniques tended to
+rely almost exclusively on the human programmers designing the poetry
+generation software; it seemed like the computer was little more than a set of
+dice. In \cite{Manurung03}, where the Templatized technique is taken to an
+extreme, the semantic scope of the produced work is still strictly limited to
+what humans provide in the LTAG collection. It seems like computer poetry like
+this isn't contributing anything to the field that a human couldn't already do
+by hand.
+
+The question is easier to answer for Generative techniques. The Travesty
+Engine, for example, produces new arrangements of pieces that humans may never
+think to produce. It can reveal new meaning in an existing piece through purely
+aleatoric means. Similarly, in the VSM Haiku generator, the produced poetry can
+describe the zeitgeist of the blogs it searches (something that even Google
+struggles to do). Clearly this poetry was doing something that a human couldn't
+do: revealing meaning hidden within existing human prose. However, I submit
+that in the former example the rearrangement is too simple; it doesn't go far
+enough and its results become predictable after a fashion. In the latter
+example, the final Haiku bear too little resemblance to their source material
+to really articulate any kind of underlying meaning to the reader.
+
+Thus, I propose a new generative technique inspired by the work of the poet and
+author William Burroughs. This technique exploits the diversity and large
+number of sentences found in large corpora--for example, Wikipedia, the online
+articles of a newspaper, or online public domain books--by scanning the
+sentences within them, profiling them, and then using them to populate a poem
+based on rules input by a human user. Thus, the technique \emph{cuts up}, like
+Burroughs \cite{wikiCutup}, some given corpus in order to produce a poetic
+result. I argue that this technique produces interesting work, and present
+several features of the resulting pieces that support this.
+
+\subsubsection{Semantic Consistency}
+By using one or more topics as rules in the input to the software one can
+topically flavor the output without restricting it. Sentences relevant to the
+selected topic will be used to produce the final piece. The reader should be
+able to get a sense of what each produced poem is "about." It is important to
+note that this semantic consistency does not undermine juxtaposition, one of
+the important aspects of computer poetry \cite{Hart96}. The output will still
+contain the often jarring combination of seemingly otherwise unrelated phrases
+despite their semantic consistency.
+
+\subsubsection{Variable Structure}
+Poems produced by my technique can scale from completely arbitrary, random
+productions to very narrowly defined poetic structures (like sonnets, Haiku, or
+limericks). The rules engine system allows for great flexibility and is a key
+component of this technique. Its success, however, relies on the theory that
+large enough corpora will contain sentences diverse enough to satisfy any input
+rules.
+
+\subsubsection{Human Mediated, Not Human Authored}
+A key aspect of my approach is that, while all of the content used to produce
+works is written by humans, the meaning of the content is subverted and altered
+by the reappropriation process to create something new in which the humans and
+computers involved both played integral roles in the poetic production. I refer
+to the technique as being \emph{human mediated} as humans provide the
+media--prose sentences--while the computer acts as the artist. In this case,
+however, the computer is more like an artist of reappropriation like a DJ,
+collage artist, or cut-up author.
 \subsubsection{Effect of Technical Implementation on Composed Work}
 \subsubsection{The Interestingness Problem}
 \section{Directed Cut-up Technique}
