@@ -11,7 +11,7 @@ sub new {
     my $self  = {};
 
     $self->{num_syll} = shift || die 'must pass a syll count';
-    $self->{weakness}   = 3;
+    $self->{weakness}   = 4;
 
     bless $self, $class;
 
