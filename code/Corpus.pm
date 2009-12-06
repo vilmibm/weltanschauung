@@ -27,7 +27,7 @@ use Lingua::EN::Splitter 'words';
 #use Lingua::EN::Unapostrophe 'unapostrophe';
 
 our @EXPORT_OK = qw/
-    create_db
+    create_schema
     normalize
     profile
     insert_into_db
@@ -98,9 +98,9 @@ sub profile {
     return $list;
 }
 
-=head2 create_db
+=head2 create_schema
 
-    my $success = create_db()
+    my $success = create_schema()
 
 Create an in-RAM db for storing and retrieving lines
 
@@ -110,7 +110,7 @@ Returns:
     -unsure; let's hope it's positive.
 
 =cut
-sub create_db {
+sub create_schema {
     my $db = shift || return 0;
     return $db->iquery("CREATE TABLE lines (
         line_no         integer primary key,
@@ -129,7 +129,7 @@ sub create_db {
 
 Args:
     -database handle
-    -An array reference of a list of hrefs containing each sentence and info about it
+    -a corpus filename
 
 Returns:
     -0 if unsuccessful, number of rows inserted otherwise.
@@ -137,7 +137,10 @@ Returns:
 =cut
 sub insert_into_db {
     my $db      = shift || return 0;
-    my $profiles = shift || return 0;
+    my $corpus  = shift || return 0;
+
+    # XXX Split this out for optimization.
+    my $profiles = profile(normalize(slurp($corpus_file)));
 
     my $rows_inserted = 0;
     for my $profile (@$profiles) {

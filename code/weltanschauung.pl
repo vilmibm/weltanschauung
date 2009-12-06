@@ -22,7 +22,7 @@ use DBIx::Simple;
 use Corpus qw/
     normalize
     profile
-    create_db
+    create_schema
     insert_into_db
 /;
 use Rules qw/
@@ -101,9 +101,8 @@ sub _handle_args {
 
     $db = _connect_db($db_file);
 
-    $profiled_aref = profile(normalize(slurp($corpus_file)));
-    create_db($db) || die 'Failed to create internal database';
-    insert_into_db($db, $profiled_aref) || die 'Failed to insert into internal database';
+    create_schema($db) || die 'Failed to create internal database';
+    insert_into_db($db, $corpus_file) || die 'Failed to insert into internal database';
 
     if ( $generate_only ) {
         say "db saved in $db_file";
