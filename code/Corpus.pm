@@ -77,7 +77,7 @@ sub insert_into_db {
 
     open my $fh, '<', $corpus;
 
-    my ($num_syllables, $words, $sentence);
+    my ($num_syllables, $words, $sentence, $sentences);
     my $rows_inserted = 0;
     my $line_no       = 0;
     my $buffer        = '';
@@ -87,7 +87,8 @@ sub insert_into_db {
         # normalize step
         $buffer =~ s/^(.*)[^.]$/$1\./;
         $buffer =~ s/\n//;
-        for $sentence ( get_sentences($buffer) ) {
+        $sentences = get_sentences($buffer);
+        for $sentence ( @$sentences ) {
             # profile step
             $sentence =~ s/'//g; # waiting for Lingua::EN::Unapostrophe
             $words = words($sentence);
