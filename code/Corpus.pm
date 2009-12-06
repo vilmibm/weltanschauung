@@ -28,75 +28,8 @@ use Lingua::EN::Splitter 'words';
 
 our @EXPORT_OK = qw/
     create_schema
-    normalize
-    profile
     insert_into_db
 /;
-
-=head2 normalize
-
-    my $normalized_sentences_aref = normalize($corpus_str);
-
-Args:
-    -some corpus as a string
-
-Returns:
-    -array reference of the corpus split into a list of sentences/sentence fragments
-
-=cut
-sub normalize {
-    my $string = shift;
-
-    $string =~ s/^(.*)[^.]$/$1\./;
-    $string =~ s/\n//;
-
-    add_acronyms(qw/
-        Trans
-        A
-    /);
-
-    # my brief experiments show that this returns sentences in-order. if this later
-    # proves to not be the case, I will have to reimplement this.
-    my $list = get_sentences($string);
-
-    return $list;
-}
-
-=head2 profile
-
-    my $profiled_aref = profile($normalized_sentences_aref);
-
-Args:
-    -some list of sentences and sentence fragments
-
-Returns:
-    -An array reference of a list of hrefs containing each sentence and info about it
-
-=cut
-sub profile {
-    my $normalized = shift;
-
-    my $list = [];
-    my $line_no = 0;
-    my $words;
-    my @last_word_phonemes;
-    my $num_syllables;
-    for my $sentence ( @$normalized ) {
-        # first of probably several sloppy regexes
-        $sentence =~ s/'//g;
-        $words = words $sentence;
-
-        push @$list, { 
-            sentence        => $sentence,
-            num_words       => scalar @$words, 
-            num_syllables   => _get_syllable_count($words), 
-            end_rhyme_sound => _find_rhyme_sound($words->[-1]),
-            line_no         => $line_no++,
-        };
-    }
-
-    return $list;
-}
 
 =head2 create_schema
 
@@ -121,8 +54,6 @@ sub create_schema {
     )");
 }
 
-
-
 =head2 insert_into_db
 
     my $success = insert_into_db($dbh, $profiles_aref);
@@ -139,12 +70,40 @@ sub insert_into_db {
     my $db      = shift || return 0;
     my $corpus  = shift || return 0;
 
-    # XXX Split this out for optimization.
-    my $profiles = profile(normalize(slurp($corpus_file)));
+    add_acronyms(qw/
+        Trans
+        A
+    /);
 
+    open my $fh, '<', $corpus;
+
+    my ($num_syllables, $words, $sentence);
     my $rows_inserted = 0;
-    for my $profile (@$profiles) {
-        $rows_inserted += $db->iquery('INSERT INTO lines', $profile);
+    my $line_no       = 0;
+    my $buffer        = '';
+    my @last_word_phonemes;
+
+    while ( read $fh, $buffer, 5000 ) {
+        # normalize step
+        $buffer =~ s/^(.*)[^.]$/$1\./;
+        $buffer =~ s/\n//;
+        for $sentence ( get_sentences($buffer) ) {
+            # profile step
+            $sentence =~ s/'//g; # waiting for Lingua::EN::Unapostrophe
+            $words = words($sentence);
+
+            $rows_inserted += $db->iquery('INSERT INTO lines', { 
+                sentence        => $sentence,
+                num_words       => scalar @$words, 
+                num_syllables   => _get_syllable_count($words), 
+                end_rhyme_sound => _find_rhyme_sound($words->[-1]),
+                line_no         => $line_no++,
+            });
+        }
+        # I realize I may be letting sentence fragments on the
+        # beginning and end of lines drop; I'm okay with that in the name of development
+        # speed at this point.  
+        $buffer = '';
     }
 
     return $rows_inserted;

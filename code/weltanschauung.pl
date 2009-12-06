@@ -20,8 +20,6 @@ use DBIx::Simple;
 
 # thesis modules
 use Corpus qw/
-    normalize
-    profile
     create_schema
     insert_into_db
 /;
@@ -92,16 +90,31 @@ sub _handle_args {
         'exact_keyword=s' => \$exact_keyword_str,
         'fuzzy_keyword=s' => \$fuzzy_keyword_str,
     );
+    
+    my $rhyme_scheme = [split '',  $rhyme_str]; # eg. ABABAB
+    my $syll_scheme  = [split ',', $syll_str ]; # eg. 5,7,5 
+    my $ex_key_scheme= [split ',', $exact_keyword_str ]; # eg iraq war, perl, china
+    my $fz_key_scheme= [split ',', $fuzzy_keyword_str ]; # eg iraq war, perl, china
+    
+    $length = max($length, scalar @$rhyme_scheme, scalar @$syll_scheme, scalar @$ex_key_scheme, scalar @$fz_key_scheme);
+    
+    my $rules_href = {
+        length       => $length,
+        rhyme_scheme => $rhyme_scheme,
+        syll_scheme  => $syll_scheme,
+        fuzzy_scheme => $fz_key_scheme,
+        exact_scheme => $ex_key_scheme,
+    };
 
     if ( $preload ) {
         die 'Must specify DB for preload option' unless $db_file;
-        $db = _connect_db($db_file);
-        return;
+        $db = _connect_db($db_file) || die 'Failed to connect to DB';
+        return $rules_href;
     }
 
-    $db = _connect_db($db_file);
+    $db = _connect_db($db_file) || die 'Faild to connect to DB';
 
-    create_schema($db) || die 'Failed to create internal database';
+    create_schema($db)                || die 'Failed to create db schema';
     insert_into_db($db, $corpus_file) || die 'Failed to insert into internal database';
 
     if ( $generate_only ) {
@@ -109,20 +122,7 @@ sub _handle_args {
         exit;
     }
 
-    my $rhyme_scheme = [split '',  $rhyme_str]; # eg. ABABAB
-    my $syll_scheme  = [split ',', $syll_str ]; # eg. 5,7,5 
-    my $ex_key_scheme= [split ',', $exact_keyword_str ]; # eg iraq war, perl, china
-    my $fz_key_scheme= [split ',', $fuzzy_keyword_str ]; # eg iraq war, perl, china
-    
-    $length = max($length, scalar @$rhyme_scheme, scalar @$syll_scheme, scalar @$ex_key_scheme, scalar @$fz_key_scheme);
-
-    return {
-        length       => $length,
-        rhyme_scheme => $rhyme_scheme,
-        syll_scheme  => $syll_scheme,
-        fuzzy_scheme => $fz_key_scheme,
-        exact_scheme => $ex_key_scheme,
-    };
+    return $rules_href;
 }
 
 END {
