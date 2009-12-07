@@ -12,7 +12,7 @@
 \setlength{\textheight}{9.5in}
 \setlength{\topmargin}{-1in}
 
-\title{Poem Generation from Large Corpora}
+\title{Poem Generation from Large Corpora through Reappropriation}
 \author{Nathaniel K Smith}
 
 \begin{document}
@@ -35,7 +35,6 @@ poetry landscape. Finally, opportunities for further research are discussed.
 \section{Introduction}
 \section{Background and Motivation}
 \subsection{Two Categories}
-\subsection{Existing Research}
 My research into existing work in the field of computer poetry revealed two
 general categories of techniques; one, I called \emp{Generative} and the other,
 \emp{Templatized}. The former category relies on some input text and an
@@ -43,6 +42,9 @@ algorithm to produce new works, while the latter relies on a pre-defined
 grammatical (or semantic) template to produce work from scratch (in other
 words, without any input text).  
 
+<diagrams>
+
+\subsection{Existing Research}
 The earliest forms of computer poetry were Templatized attempts. One, RACTER,
 used on very complex and human written templates which were populated randomly
 by a computer. Essentially, RACTER resembled the popular game Mad Libs; the
@@ -153,6 +155,42 @@ however, the computer is more like an artist of reappropriation like a DJ,
 collage artist, or cut-up author.
 \section{Directed Cut-up Technique}
 \subsection{Explication of Algorithm}
+\pagebreak
+\onehalfspacing
+\begin{figure}[here]
+\begin{algorithmic}
+\STATE Given some corpus $C$ and database handle $DB$
+\STATE $L\gets$ normalize($C$)
+\STATE insert($DB$, profile($L$))
+\STATE $i \gets$ input()
+\STATE $R \gets$ rulesParse($i$)
+\STATE $Q \gets \emptyset$
+\FOR{$r \in R$}
+    \STATE push($Q$, ruleToQuery($r$))
+\ENDFOR
+\STATE $P \gets \emptyset$
+\FOR{$q \in Q$}
+    \STATE $S \gets$ select($DB, q$)
+    \IF {not $S$}
+        \STATE $r\prime \gets$ queryToRule($q$)
+        \WHILE {$r\prime \gets$ decompose($r\prime$)}
+            \STATE $q\prime \gets$ ruleToQuery($r\prime$)
+            \STATE $S\prime \gets$ select($DB, q\prime$)
+            \IF { $S\prime$ }
+                \STATE $S \gets S\prime$
+                \STATE break
+            \ENDIF
+        \ENDWHILE
+    \ENDIF
+    \STATE $s \gets$ random($S$)
+    \STATE push($P, s$)
+\ENDFOR
+\STATE output($P$)
+\end{algorithmic}
+\caption{My algorithm}
+\label{fig:algorithm}
+\end{figure}
+\doublespacing
 \subsection{Corpus Acquisition}
 \subsection{Corpus Processing}
 \subsection{Rules System}
