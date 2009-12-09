@@ -21,7 +21,7 @@
 
 \begin{abstract}
 This paper presents a new approach to computer poetry, presenting an algorithm
-that performs a directed cut-up generation technique on a large corpus. The
+that performs a directed cut-up poem generation technique on a large corpus. The
 technical implementation of the algorithm and its associated modules will be
 discussed in detail. To provide background and motivation, a survey of existing
 computer poetry generation techniques is presented with an analysis of their
@@ -33,6 +33,33 @@ poetry landscape. Finally, opportunities for further research are discussed.
 \end{abstract}
 
 \section{Introduction}
+Innovation in the field of computer generated poetry has been sluggish at best,
+most likely because of the historically small intersection between poets and
+programmers \cite{Hart96}. It seems that most attempts made at 'good' computer
+poetry (A metric which is arguably even less measurable than in 'good' poetry)
+often fall prey to one of two problems: one, leaving too much to the computer,
+thus cutting out human spontanaeity and creativity or two, treating the
+computer as a bland random number generator and using an over-abundance of
+human-prepared content.
+
+I posit that there is a way to synthesize these two extremes by exploiting
+human content easily accessible via the Internet. Huge changes in both the
+amount of content stored online and the continuing ease of access to such
+content mean that there is a massive store of thoughts, emotions, humour,
+tradgedy, and other elements of 'good' poetry just waiting to be used as
+inspiration for the computer-poet. To this end, I present an algorithm that
+'cuts up' a given, large corpus (presumably harvested from the Internet) and
+produces a poem according to some desired output parameters.
+
+This paper will discuss in detail my implementation of the algorithm and its
+associated modules. To provide background and motivation, a survey of existing
+computer poetry generation techniques is presented with an analysis of their
+ability to produce interesting results. To support my analysis, I offer a
+discussion of how the technical implementation of computer poetry generation
+affects the production of interesting results. I argue that the new, presented
+algorithm fills both a technical and creative gap within the existing computer
+poetry landscape. Finally, opportunities for further research are discussed.
+
 \section{Background and Motivation}
 \subsection{Two Categories}
 My research into existing work in the field of computer poetry revealed two
@@ -42,15 +69,34 @@ algorithm to produce new works, while the latter relies on a pre-defined
 grammatical (or semantic) template to produce work from scratch (in other
 words, without any input text).  
 
-<diagrams>
+To adapt the summation found in \cite{Hart96}, Templatized computer poetry has this flow:
+\begin{center}
+\begin{boxed}
+PROGRAM, TEMPLATE $\rightarrow$ TEXT
+\end{boxed}
+\end{center}
+while Generative computer poetry looks like this:
+\begin{center}
+\begin{boxed}
+TEXT $\rightarrow$ PROGRAM $\rightarrow$ TEXT
+\end{boxed}
+\end{center}
 
-\subsection{Existing Research}
-The earliest forms of computer poetry were Templatized attempts. One, RACTER,
-used on very complex and human written templates which were populated randomly
-by a computer. Essentially, RACTER resembled the popular game Mad Libs; the
-templates had slots for nouns, verbs, and adjectives and the computer simply
-pulled from words lists to fill them \cite{Hart96}.
+\subsection{Existing Projects}
+\subsubsection{Auto-Beatnik and RACTER}
+Early attempts at computer poetry were Templatized techniques. The earliest
+documented approach was Auto-Beatnik, which churned out randomly rendered poems
+using grammatical structures and a vocabulary.  It was not until 1984 that
+another serious attempt at poetry generation was publicised with the release of
+a work by the program RACTER called \emph{The Policeman's Beard is
+Half-Constructed}. At 66 pages, \emph{Policeman's Beard} was a much larger
+effort than the handful of short poems output by Auto-Beatnik. However, the
+generation process was essentially the same idea: the program called upon
+built-in grammatical templates and a large vocabulary of english words
+\cite{Chamb84}. Despite the 22 years between these two projects, they both
+were, at their core, automated versions of the popular game Mad Libs.
 
+\subsubsection{McGonagall}
 A recent, and more advanced Templatized technique was the subject of the
 dissertation of \cite{Manurung03}. Contained within a software package called
 McGonagall, this technique stores "templates" in the form of Lexicalized Tree
@@ -61,6 +107,7 @@ These works are evaluated by functions that check for certain poetic features
 (like rhyming and alliteration) and final "solutions" are presented to the
 user.
 
+\subsubsection{The Travesty Engine}
 An early and basic Generative approach is the Travesty Engine discussed in
 \cite{Hart96}. This technique accepted an input text and reorganized it using a
 Markov chain (a random generative process in which future states are selected
@@ -72,7 +119,8 @@ resemble a grammatically correct rearrangment of the phrases in $s$. Thus, for
 varying levels of $n$, new poetry could be produced from any input and this
 basic algorithm without the need for any kind of external lexicon.
 
-A recent technique, and one closest to the technique I will be proposing, uses
+\subsubsection{Vector Space Modeling}
+A recent technique, and one similar to the technique I am proposing, uses
 Vector Space Modeling to produce Haiku using content found on blogs throughout
 the Internet \cite{Wong08}. This method produces modern (in other words, not
 strictly 5-7-5) Haiku poems using randomly accessed blog content. 
@@ -90,6 +138,11 @@ analysis stage in which sentence pairs are picked based on a vector
 representation of their semantic similarity. Finally, the 'best' three lines
 are picked for the final Haiku, each one semantically involving one of the
 three random keywords originally picked.
+
+\subsubsection{Case Based Reasoning Approach}
+Another approach similar to my technique is the case based reasoning technique
+developed in \cite{Gervas01}.
+
 \subsection{Analysis}
 \subsubsection{Effect of Technical Implementation on Composed Work}
 \subsubsection{The Interestingness Problem}
@@ -116,7 +169,7 @@ enough and its results become predictable after a fashion. In the latter
 example, the final Haiku bear too little resemblance to their source material
 to really articulate any kind of underlying meaning to the reader.
 
-Thus, I propose a new generative technique inspired by the work of the poet and
+Thus, I propose a new Generative technique inspired by the work of the poet and
 author William Burroughs. This technique exploits the diversity and large
 number of sentences found in large corpora--for example, Wikipedia, the online
 articles of a newspaper, or online public domain books--by scanning the
@@ -164,18 +217,12 @@ collage artist, or cut-up author.
 \STATE insert($DB$, profile($L$))
 \STATE $i \gets$ input()
 \STATE $R \gets$ rulesParse($i$)
-\STATE $Q \gets \emptyset$
-\FOR{$r \in R$}
-    \STATE push($Q$, ruleToQuery($r$))
-\ENDFOR
 \STATE $P \gets \emptyset$
-\FOR{$q \in Q$}
-    \STATE $S \gets$ select($DB, q$)
+\FOR{$r \in R$}
+    \STATE $S \gets$ select($DB$, ruleToQuery($r$))
     \IF {not $S$}
-        \STATE $r\prime \gets$ queryToRule($q$)
-        \WHILE {$r\prime \gets$ decompose($r\prime$)}
-            \STATE $q\prime \gets$ ruleToQuery($r\prime$)
-            \STATE $S\prime \gets$ select($DB, q\prime$)
+        \WHILE {$r\prime \gets$ weaken($r\prime$)}
+            \STATE $S\prime \gets$ select($DB$, ruleToQuery($r\prime$))
             \IF { $S\prime$ }
                 \STATE $S \gets S\prime$
                 \STATE break
