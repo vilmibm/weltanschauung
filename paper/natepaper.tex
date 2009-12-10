@@ -245,12 +245,13 @@ chosen for its speed, in-RAM database feature and portability.
 
 Despite initial concerns about the ability of an interpreted language to
 process enough text in a short time, the implementation ended up with favorable
-benchmarks. Producing a 10 line poem from a SQLite3 database containing .4
-million sentences consistently took between .2 and .4 seconds. Parsing a 1
-million line corpus and inserting it into a SQLite3 database took 2.5 hours.
-The former benchmark indicates that the poem generation code will scale for
-larger corpora, but the latter shows that refactoring or rewriting will be
-necessary to support multimillion line corpora.
+benchmarks. Producing 10 line poems with an AB rhyme scheme and 10 syllables
+per line from a SQLite3 database containing .4 million sentences consistently
+took between .2 and .4 seconds. Parsing a 1 million line corpus and inserting
+it into a SQLite3 database took 2.5 hours.  The former benchmark indicates that
+the poem generation code will scale for larger corpora, but the latter shows
+that refactoring or rewriting will be necessary to support multimillion line
+corpora.
 
 \subsection{Corpus Acquisition}
 A key component of this approach is the presence of a large corpus. Years ago,
@@ -272,10 +273,82 @@ proved to be too diverse (in terms of encoding and structure) to be parsed
 without lots of additional overhead.
 
 \subsection{Corpus Processing}
+For each sentence found in the input corpus, the following details are stored in a database:
+\begin{enumerate}
+\item line number
+\item rhyme sound
+\item syllable count
+\item number of words
+\item sentence text
+\end{enumerate}
+
+The rhyme sound is determined through analyzing the phonetic representation of
+the last word of the sentence. Lingua::EN::Phoneme, a Perl module based on the
+CMU Pronouncing Dictionary, is used to break apart the word into its
+constituent phonemes. Its rhyme sound is defined to be the final vowel sound of
+the phoneme list followed by any number of consonant sounds. For instance,
+since the phonemes of the word \emph{bear} is B, AO1, R, its rhyme sound is
+represented as 'AO1R' while \emph{bears} would be represented as 'AO1RS'.
+
+Syllables are also counted using the Lingua::EN::Phoneme module. The syllable
+count of a word is defined to be the number of vowel sounds (in other words,
+phonemes with a string representation of length 3) found in its phonetic
+representation.
+
+Unfortunately, relying on the CMU dictionary means that there are occasionally
+words which are not profiled in the listing. For these words, no rhyme sound is
+recorded. For syllable counting, the Perl module Lingua::EN::Syllable is fallen
+back to, which employs an intelligent vowel count technique to produce syllable
+counts with about 80\% accuracy.
+
+The line number is used both as a primary key for the sentence's database
+representation as well as for determining line proximity.
 
 \subsection{Rules System}
+Once a corpus database is ready, user inputted guidelines for the desired
+output are parsed into a list of lists of Rule objects that are capable of
+weakening themselves and producing SQL clauses to be used in a SELECT
+statement.
+
 \subsubsection{Input to Rules Translation}
+In the current implementation, output guidelines are specified through command
+line arguments to a main driver program. With the exception of the length and
+stanza rules, each rule specific on the command line describes a scheme--in
+other words, a layout for each line of the poem.
+
+For example, given the string ABABCC, the program will first pick a random
+sound for each unique letter in the scheme and later use them to select
+sentences with that rhyme sound for each line's corresponding rhyme label
+modulo the number of lines. Thus, a 12 line poem with the scheme ABABCC would
+produce a poem with ABABCCABABCC rhymes.
+
+Similarly, one expressed syllable schemes using a comma separated list of
+syllable counts. To specify a Haiku, one would input a length of 3 and a
+syllable scheme of "5,7,5".
+
+Once each input rule is parsed, a list of Rule objects for each line of the
+poem is created. Each rule object is a subclass of a basic Rule
+class--supplying only a constructor and get/set functions for its weakness
+level--and is initialized with the parameters set on the command line.
+
+As an example, the command line arguments
+
+--rhyme="AB" --length="5,10" --syllables="8" --fuzzy\_keyword="turntable,alphabet"
+
+would translate to the following data structure (with each rule object
+represented by the resulting constructor call) after selecting 'AO1' as the
+rhyme sound for A and 'EH1' as the rhyme sound for B:
+
+(
+    (Rule::Rhyme('A01'), Rule::Syllable(5), Rule::Keyword('turntable', 'fuzzy')),
+    (Rule::Rhyme('EH1'), Rule::Syllable(10), Rule::Keyword('alphabet', 'fuzzy')),
+    (Rule::Rhyme('A01'), Rule::Syllable(5), Rule::Keyword('turntable', 'fuzzy')),
+    (Rule::Rhyme('EH1'), Rule::Syllable(10), Rule::Keyword('alphabet', 'fuzzy')),
+    (Rule::Rhyme('A01'), Rule::Syllable(5), Rule::Keyword('turntable', 'fuzzy')),
+)
+
 \subsubsection{Rules to Query Translation}
+\subsubsection{Implemented Rules}
 \subsection{Final Composition}
 \section{Results}
 \subsection{Selected outputs}
