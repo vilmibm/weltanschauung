@@ -60,8 +60,8 @@ affects the production of interesting results. I argue that the new, presented
 algorithm fills both a technical and creative gap within the existing computer
 poetry landscape. Finally, opportunities for further research are discussed.
 
-\section{Background and Motivation}
-\subsection{Two Categories}
+\subsection{Background}
+\subsubsection{Two Categories}
 My research into existing work in the field of computer poetry revealed two
 general categories of techniques; one, I called \emp{Generative} and the other,
 \emp{Templatized}. The former category relies on some input text and an
@@ -82,8 +82,7 @@ TEXT $\rightarrow$ PROGRAM $\rightarrow$ TEXT
 \end{boxed}
 \end{center}
 
-\subsection{Existing Projects}
-\subsubsection{Auto-Beatnik and RACTER}
+\subsubsection{Existing Projects}
 Early attempts at computer poetry were Templatized techniques. The earliest
 documented approach was Auto-Beatnik, which churned out randomly rendered poems
 using grammatical structures and a vocabulary.  It was not until 1984 that
@@ -96,18 +95,22 @@ built-in grammatical templates and a large vocabulary of english words
 \cite{Chamb84}. Despite the 22 years between these two projects, they both
 were, at their core, automated versions of the popular game Mad Libs.
 
-\subsubsection{McGonagall}
-A recent, and more advanced Templatized technique was the subject of the
-dissertation of \cite{Manurung03}. Contained within a software package called
-McGonagall, this technique stores "templates" in the form of Lexicalized Tree
-Adjoining Grammars. In other words, instead of storing hardcoded grammatical
-structures, a collection of LTAGs representing words and their semantics, part
-of speech, and phonetic attributes are used to evolve candidate poetic works.
-These works are evaluated by functions that check for certain poetic features
-(like rhyming and alliteration) and final "solutions" are presented to the
-user.
+A more recent Templatized technique is detailed in \cite{Manurung00} and
+\cite{Manurung03}. This technique stochastically evolves a poem from a simple
+phrase or set of simple phrases into an interesting poem using a set of
+evaluation functions.
 
-\subsubsection{The Travesty Engine}
+This approach is an even further departure from RACTER than Prose. The
+technique, packaged in software named McGonagall, relies on the manipulation of
+grammatical information using a Lexicalized Tree Adjoining Grammar (LTAG). The
+LTAG is a derivation tree; in other words, it itself does not describe the
+phrase structure of a sentence. Instead, it describes operations performed on a
+set of phrases. Each node of the LTAG is an elementary tree describing some
+phrase structure and each edge labels the location at which a child node should
+be inserted into its parent node. These LTAG structures serve as a kind of
+template from which poems are derived. Potential solutions are evolved using
+the LTAGs and evaluated for things like meter, rhyme, and semantics.
+
 An early and basic Generative approach is the Travesty Engine discussed in
 \cite{Hart96}. This technique accepted an input text and reorganized it using a
 Markov chain (a random generative process in which future states are selected
@@ -119,7 +122,6 @@ resemble a grammatically correct rearrangment of the phrases in $s$. Thus, for
 varying levels of $n$, new poetry could be produced from any input and this
 basic algorithm without the need for any kind of external lexicon.
 
-\subsubsection{Vector Space Modeling}
 A recent technique, and one similar to the technique I am proposing, uses
 Vector Space Modeling to produce Haiku using content found on blogs throughout
 the Internet \cite{Wong08}. This method produces modern (in other words, not
@@ -139,15 +141,18 @@ representation of their semantic similarity. Finally, the 'best' three lines
 are picked for the final Haiku, each one semantically involving one of the
 three random keywords originally picked.
 
-\subsubsection{Case Based Reasoning Approach}
 Another approach similar to my technique is the case based reasoning technique
-developed in \cite{Gervas01}.
+developed in \cite{Gervas01}. This approach accepts prose sentences to be
+converted to poetry. Largely, the process is Generative, making grammatical
+changes to the input sentence as well as word substitutions. The target output
+is specified by some existing stanza of the desired form (ie, a haiku). An
+important part of the process, however, is a vocabulary of words that may be
+substituted into the original prose to achieve the desired poetic structure,
+making this approach a combination of Templatized and Generative techniques. A
+user must supply this vocabulary for each poem desired.
 
 \subsection{Analysis}
-\subsubsection{Effect of Technical Implementation on Composed Work}
-\subsubsection{The Interestingness Problem}
-\subsection{Motivation}
-Throughout the course of my research it became evident that a common problem in
+Throughout the course of this research it became evident that a common problem in
 computer poetry was simply the question: Why? Templatized techniques tended to
 rely almost exclusively on the human programmers designing the poetry
 generation software; it seemed like the computer was little more than a set of
@@ -156,6 +161,12 @@ extreme, the semantic scope of the produced work is still strictly limited to
 what humans provide in the LTAG collection. It seems like computer poetry like
 this isn't contributing anything to the field that a human couldn't already do
 by hand.
+
+The CBR approach suffers from similar problems despite being a partially Generative technique.
+A large part of the creativity of the system depends on the words chosen for
+the vocabulary used, meaning that a human must premeditate the content of
+produced poems. Similarly, a human user must select the poetic verses used to
+compare potential outputs to when generating a poem.
 
 The question is easier to answer for Generative techniques. The Travesty
 Engine, for example, produces new arrangements of pieces that humans may never
@@ -169,7 +180,8 @@ enough and its results become predictable after a fashion. In the latter
 example, the final Haiku bear too little resemblance to their source material
 to really articulate any kind of underlying meaning to the reader.
 
-Thus, I propose a new Generative technique inspired by the work of the poet and
+\section{Directed Cut-up Technique}
+Thus, I present a new Generative technique inspired by the work of the poet and
 author William Burroughs. This technique exploits the diversity and large
 number of sentences found in large corpora--for example, Wikipedia, the online
 articles of a newspaper, or online public domain books--by scanning the
@@ -179,35 +191,21 @@ Burroughs \cite{wikiCutup}, some given corpus in order to produce a poetic
 result. I argue that this technique produces interesting work, and present
 several features of the resulting pieces that support this.
 
-\subsubsection{Semantic Consistency}
-By using one or more topics as rules in the input to the software one can
-topically flavor the output without restricting it. Sentences relevant to the
-selected topic will be used to produce the final piece. The reader should be
-able to get a sense of what each produced poem is "about." It is important to
-note that this semantic consistency does not undermine juxtaposition, one of
-the important aspects of computer poetry \cite{Hart96}. The output will still
-contain the often jarring combination of seemingly otherwise unrelated phrases
-despite their semantic consistency.
-
-\subsubsection{Variable Structure}
-Poems produced by my technique can scale from completely arbitrary, random
-productions to very narrowly defined poetic structures (like sonnets, Haiku, or
-limericks). The rules engine system allows for great flexibility and is a key
-component of this technique. Its success, however, relies on the theory that
-large enough corpora will contain sentences diverse enough to satisfy any input
-rules.
-
-\subsubsection{Human Mediated, Not Human Authored}
-A key aspect of my approach is that, while all of the content used to produce
-works is written by humans, the meaning of the content is subverted and altered
-by the reappropriation process to create something new in which the humans and
-computers involved both played integral roles in the poetic production. I refer
-to the technique as being \emph{human mediated} as humans provide the
-media--prose sentences--while the computer acts as the artist. In this case,
-however, the computer is more like an artist of reappropriation like a DJ,
-collage artist, or cut-up author.
-\section{Directed Cut-up Technique}
 \subsection{Explication of Algorithm}
+The technique is driven by a short algorithm  supported by several modules. It
+is presented in pseudo-code in figure 1. The algorithm, given some corpus $C$
+containing several thousands of lines of text, stores each sentence of the
+corpus in a databse with associated syllabic and phonetic information. Using
+any number of simple guidelines supplied by a user, it proceeds to construct a
+poem using the sentences stored in the database. Should the algorithm be unable
+to locate a sentence to satisfy some line of the desired poem--say, a sentence with
+10 syllables containing the word \emph{aleatoric} and rhyming with the word
+\emph{trumpet}--it \emph{weakens} the rule for that line, relaxing the criteria
+used in the database lookup to find a sentence that at least closely resembles
+one needed to meet the user's guidelines. Without this technique, termination
+is not guaranteed; however, every rule eventually weakens to the trivial rule,
+which is satisfied by any sentence.
+
 \pagebreak
 \onehalfspacing
 \begin{figure}[here]
@@ -238,8 +236,43 @@ collage artist, or cut-up author.
 \label{fig:algorithm}
 \end{figure}
 \doublespacing
+
+\subsection{Technical Implementation}
+The tools involved in the implementation of this algorithm are Perl 5.10 and
+SQLite3. Perl was chosen due to its rich Lingua::EN repository which contained
+many modules for parsing, splicing, and cleaning up English text. SQLite3 was
+chosen for its speed, in-RAM database feature and portability.
+
+Despite initial concerns about the ability of an interpreted language to
+process enough text in a short time, the implementation ended up with favorable
+benchmarks. Producing a 10 line poem from a SQLite3 database containing .4
+million sentences consistently took between .2 and .4 seconds. Parsing a 1
+million line corpus and inserting it into a SQLite3 database took 2.5 hours.
+The former benchmark indicates that the poem generation code will scale for
+larger corpora, but the latter shows that refactoring or rewriting will be
+necessary to support multimillion line corpora.
+
 \subsection{Corpus Acquisition}
+A key component of this approach is the presence of a large corpus. Years ago,
+before the Internet expanded to its current volumnuous state, it is unlikely
+that any such corpus would be publicly and freely available. Now, one can
+consider the publicly accessible areas of the Internet as one huge corpus with
+smaller selections of Internet content as subsets of this corpus.
+
+For initial testing and debugging, a digitized version of a dozen short stories
+by Jorge Luis Borges was manually developed and employed.
+
+For later testing and protyping, a selection of 3,700 books from Project
+Gutenberg were scraped using an automated script. From these books, 1,000,000
+lines of text (out of a total 7,000,000) were analyzed, producing 433,850
+profiled sentences stored in a database for use.
+
+A scrape of several thousand Wikipedia pages was attempted, but the content
+proved to be too diverse (in terms of encoding and structure) to be parsed
+without lots of additional overhead.
+
 \subsection{Corpus Processing}
+
 \subsection{Rules System}
 \subsubsection{Input to Rules Translation}
 \subsubsection{Rules to Query Translation}
@@ -247,6 +280,35 @@ collage artist, or cut-up author.
 \section{Results}
 \subsection{Selected outputs}
 \subsection{Defense of Technique}
+
+\subsubsection{Semantic Consistency}
+By using one or more topics as rules in the input to the software one can
+topically flavor the output without restricting it. Sentences relevant to the
+selected topic will be used to produce the final piece. The reader should be
+able to get a sense of what each produced poem is "about." It is important to
+note that this semantic consistency does not undermine juxtaposition, one of
+the important aspects of computer poetry \cite{Hart96}. The output will still
+contain the often jarring combination of seemingly otherwise unrelated phrases
+despite their semantic consistency.
+
+\subsubsection{Variable Structure}
+Poems produced by my technique can scale from completely arbitrary, random
+productions to very narrowly defined poetic structures (like sonnets, Haiku, or
+limericks). The rules engine system allows for great flexibility and is a key
+component of this technique. Its success, however, relies on the theory that
+large enough corpora will contain sentences diverse enough to satisfy any input
+rules.
+
+\subsubsection{Human Mediated, Not Human Authored}
+A key aspect of my approach is that, while all of the content used to produce
+works is written by humans, the meaning of the content is subverted and altered
+by the reappropriation process to create something new in which the humans and
+computers involved both played integral roles in the poetic production. I refer
+to the technique as being \emph{human mediated} as humans provide the
+media--prose sentences--while the computer acts as the artist. In this case,
+however, the computer is more like an artist of reappropriation like a DJ,
+collage artist, or cut-up author.
+
 \section{Further Research}
 
 \bibliography{paper}
