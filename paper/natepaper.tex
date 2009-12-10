@@ -274,6 +274,7 @@ without lots of additional overhead.
 
 \subsection{Corpus Processing}
 For each sentence found in the input corpus, the following details are stored in a database:
+\onehalfspacing
 \begin{enumerate}
 \item line number
 \item rhyme sound
@@ -281,6 +282,7 @@ For each sentence found in the input corpus, the following details are stored in
 \item number of words
 \item sentence text
 \end{enumerate}
+\doublespacing
 
 The rhyme sound is determined through analyzing the phonetic representation of
 the last word of the sentence. Lingua::EN::Phoneme, a Perl module based on the
@@ -331,21 +333,21 @@ poem is created. Each rule object is a subclass of a basic Rule
 class--supplying only a constructor and get/set functions for its weakness
 level--and is initialized with the parameters set on the command line.
 
-As an example, the command line arguments
-
+As an example, the command line arguments:
 --rhyme="AB" --length="5,10" --syllables="8" --fuzzy\_keyword="turntable,alphabet"
-
 would translate to the following data structure (with each rule object
 represented by the resulting constructor call) after selecting 'AO1' as the
 rhyme sound for A and 'EH1' as the rhyme sound for B:
 
+\begin{verbatim}
 (
     (Rule::Rhyme('A01'), Rule::Syllable(5), Rule::Keyword('turntable', 'fuzzy')),
     (Rule::Rhyme('EH1'), Rule::Syllable(10), Rule::Keyword('alphabet', 'fuzzy')),
     (Rule::Rhyme('A01'), Rule::Syllable(5), Rule::Keyword('turntable', 'fuzzy')),
     (Rule::Rhyme('EH1'), Rule::Syllable(10), Rule::Keyword('alphabet', 'fuzzy')),
-    (Rule::Rhyme('A01'), Rule::Syllable(5), Rule::Keyword('turntable', 'fuzzy')),
+    (Rule::Rhyme('A01'), Rule::Syllable(5), Rule::Keyword('turntable', 'fuzzy'))
 )
+\end{verbatim}
 
 \subsubsection{Rules to Query Translation}
 \subsubsection{Implemented Rules}
