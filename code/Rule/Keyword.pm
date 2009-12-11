@@ -28,7 +28,7 @@ sub get_clause {
     given ($self->get_weakness()) {
         when (11) {
             continue unless $type eq 'exact';
-            return "(sentence LIKE '%$keyword%')";
+            return "(sentence LIKE '% $keyword %')";
         }
         when ([1..11]) {
             my $range = 12 - $_;
