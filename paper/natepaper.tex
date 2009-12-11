@@ -35,8 +35,8 @@ poetry landscape. Finally, opportunities for further research are discussed.
 \section{Introduction}
 Innovation in the field of computer generated poetry has been sluggish at best,
 most likely because of the historically small intersection between poets and
-programmers \cite{Hart96}. It seems that most attempts made at 'good' computer
-poetry (A metric which is arguably even less measurable than in 'good' poetry)
+programmers \cite{Hart96}. It seems that most attempts made at `good' computer
+poetry (A metric which is arguably even less measurable than in `good' poetry)
 often fall prey to one of two problems: one, leaving too much to the computer,
 thus cutting out human spontanaeity and creativity or two, treating the
 computer as a bland random number generator and using an over-abundance of
@@ -46,9 +46,9 @@ I posit that there is a way to synthesize these two extremes by exploiting
 human content easily accessible via the Internet. Huge changes in both the
 amount of content stored online and the continuing ease of access to such
 content mean that there is a massive store of thoughts, emotions, humour,
-tradgedy, and other elements of 'good' poetry just waiting to be used as
+tradgedy, and other elements of `good' poetry just waiting to be used as
 inspiration for the computer-poet. To this end, I present an algorithm that
-'cuts up' a given, large corpus (presumably harvested from the Internet) and
+`cuts up' a given, large corpus (presumably harvested from the Internet) and
 produces a poem according to some desired output parameters.
 
 This paper will discuss in detail my implementation of the algorithm and its
@@ -137,7 +137,7 @@ suitable for use in Haiku.
 Three keywords are randomly picked from the lexicon and used to further narrow
 the sentence repository. The remaining fragments are then run through an
 analysis stage in which sentence pairs are picked based on a vector
-representation of their semantic similarity. Finally, the 'best' three lines
+representation of their semantic similarity. Finally, the `best' three lines
 are picked for the final Haiku, each one semantically involving one of the
 three random keywords originally picked.
 
@@ -214,13 +214,13 @@ which is satisfied by any sentence.
 \STATE $L\gets$ normalize($C$)
 \STATE insert($DB$, profile($L$))
 \STATE $i \gets$ input()
-\STATE $R \gets$ rulesParse($i$)
-\STATE $P \gets \emptyset$
+\STATE $R \gets$ rulesParse($i$) \COMMENT{a list of lists of Rule objects}
+\STATE $P \gets \emptyset$ \COMMENT{the output poem (a list of lines)}
 \FOR{$r \in R$}
-    \STATE $S \gets$ select($DB$, ruleToQuery($r$))
+    \STATE $S \gets$ select($DB$, ruleSetToQuery($r$))
     \IF {not $S$}
         \WHILE {$r\prime \gets$ weaken($r\prime$)}
-            \STATE $S\prime \gets$ select($DB$, ruleToQuery($r\prime$))
+            \STATE $S\prime \gets$ select($DB$, ruleSetToQuery($r\prime$))
             \IF { $S\prime$ }
                 \STATE $S \gets S\prime$
                 \STATE break
@@ -290,7 +290,7 @@ CMU Pronouncing Dictionary, is used to break apart the word into its
 constituent phonemes. Its rhyme sound is defined to be the final vowel sound of
 the phoneme list followed by any number of consonant sounds. For instance,
 since the phonemes of the word \emph{bear} is B, AO1, R, its rhyme sound is
-represented as 'AO1R' while \emph{bears} would be represented as 'AO1RS'.
+represented as `AO1R' while \emph{bears} would be represented as `AO1RS'.
 
 Syllables are also counted using the Lingua::EN::Phoneme module. The syllable
 count of a word is defined to be the number of vowel sounds (in other words,
@@ -314,9 +314,9 @@ statement.
 
 \subsubsection{Input to Rules Translation}
 In the current implementation, output guidelines are specified through command
-line arguments to a main driver program. With the exception of the length and
-stanza rules, each rule specific on the command line describes a scheme--in
-other words, a layout for each line of the poem.
+line arguments to a main driver program. With the exception of the length rule,
+each rule specific on the command line describes a scheme--in other words, a
+layout for each line of the poem.
 
 For example, given the string ABABCC, the program will first pick a random
 sound for each unique letter in the scheme and later use them to select
@@ -326,7 +326,7 @@ produce a poem with ABABCCABABCC rhymes.
 
 Similarly, one expressed syllable schemes using a comma separated list of
 syllable counts. To specify a Haiku, one would input a length of 3 and a
-syllable scheme of "5,7,5".
+syllable scheme of ``5,7,5".
 
 Once each input rule is parsed, a list of Rule objects for each line of the
 poem is created. Each rule object is a subclass of a basic Rule
@@ -334,23 +334,122 @@ class--supplying only a constructor and get/set functions for its weakness
 level--and is initialized with the parameters set on the command line.
 
 As an example, the command line arguments:
---rhyme="AB" --length="5,10" --syllables="8" --fuzzy\_keyword="turntable,alphabet"
+\begin{verbatim}
+--rhyme=``AB" --length=``5,10" --syllables=``8" --fuzzy\_keyword=``turntable,alphabet"
+\end{verbatim}
 would translate to the following data structure (with each rule object
-represented by the resulting constructor call) after selecting 'AO1' as the
-rhyme sound for A and 'EH1' as the rhyme sound for B:
+represented by the resulting constructor call) after selecting `AO1' as the
+rhyme sound for A and `EH1' as the rhyme sound for B:
 
 \begin{verbatim}
 (
-    (Rule::Rhyme('A01'), Rule::Syllable(5), Rule::Keyword('turntable', 'fuzzy')),
-    (Rule::Rhyme('EH1'), Rule::Syllable(10), Rule::Keyword('alphabet', 'fuzzy')),
-    (Rule::Rhyme('A01'), Rule::Syllable(5), Rule::Keyword('turntable', 'fuzzy')),
-    (Rule::Rhyme('EH1'), Rule::Syllable(10), Rule::Keyword('alphabet', 'fuzzy')),
-    (Rule::Rhyme('A01'), Rule::Syllable(5), Rule::Keyword('turntable', 'fuzzy'))
+    (Rule::Rhyme(`A01'), Rule::Syllable(5), Rule::Keyword(`turntable', `fuzzy')),
+    (Rule::Rhyme(`EH1'), Rule::Syllable(10), Rule::Keyword(`alphabet', `fuzzy')),
+    (Rule::Rhyme(`A01'), Rule::Syllable(5), Rule::Keyword(`turntable', `fuzzy')),
+    (Rule::Rhyme(`EH1'), Rule::Syllable(10), Rule::Keyword(`alphabet', `fuzzy')),
+    (Rule::Rhyme(`A01'), Rule::Syllable(5), Rule::Keyword(`turntable', `fuzzy'))
 )
 \end{verbatim}
 
-\subsubsection{Rules to Query Translation}
+\subsubsection{Rule Class}
+Though not included in the algorithm's original design, it became clear that
+the only way to properly organize the rule code was through an object oriented
+approach. I designed a Rule class which keeps track of a `weakness' level--the
+number of times the rule has been liberalized by the algorithm--and provides
+functions for weakening the rule returning a SQL clause that describes the rule
+in its current state.
+
+Each rule object's get\_clause function returns SQL suitable for appending to a
+SELECT statement's WHERE clause. For example, the unweakened SQL for a
+Rule::Syllable object initialized with an argument of 5 would be
+`(num\_syllables = 5)'. Thus, the ruleSetToQuery needs only iterate over the
+rule objects for any line of the poem it's constructing and join each object's
+get\_clause output with the string ` AND ' to result in a statement like:
+
+\begin{verbatim}
+SELECT sentence 
+    FROM lines 
+    WHERE (num_syllables = 5) 
+    AND (end_rhyme_sound = 'AO1') 
+    AND (sentence LIKE '% burrow %')
+\end{verbatim}
+
+Once weakened, a rule object's get\_clause function returns SQL modified to be
+more general. Instead of giving weights to any kind of rule, each rule object
+in the rule set for a given line of a poem is equally likely to be randomly
+weakened. To illustrate the weakening process, here is a trace of the SQL
+generated for each line of a sample 10-line AB scheme poem using a small (600
+sentence) corpus:
+
+\begin{verbatim}
+SELECT sentence FROM lines WHERE...
+
+(end_rhyme_sound=\'AE1N\')  AND  (num_syllables = 10)
+(end_rhyme_sound=\'AE1N\')  AND  (num_syllables BETWEEN 10-1 AND 10+1)
+(end_rhyme_sound=\'AE1N\')  AND  (num_syllables BETWEEN 10-2 AND 10+2)
+(end_rhyme_sound=\'AE2N\')  AND  (num_syllables BETWEEN 10-2 AND 10+2)
+(end_rhyme_sound=\'AE0N\')  AND  (num_syllables BETWEEN 10-2 AND 10+2)
+(end_rhyme_sound=\'AE0N\')  AND  (num_syllables BETWEEN 10-3 AND 10+3)
+(1) AND (num_syllables BETWEEN 10-3 AND 10+3)
+(end_rhyme_sound=\'AH0L\') AND (num_syllables = 10)
+(end_rhyme_sound=\'AH1L\') AND (num_syllables = 10)
+(end_rhyme_sound=\'AH1L\') AND (num_syllables BETWEEN 10-1 AND 10+1)
+(end_rhyme_sound=\'AH2L\') AND (num_syllables BETWEEN 10-1 AND 10+1)
+(1) AND (num_syllables BETWEEN 10-1 AND 10+1)
+(end_rhyme_sound=\'AE1N\') AND (num_syllables = 10)
+(end_rhyme_sound=\'AE2N\') AND (num_syllables = 10)
+(end_rhyme_sound=\'AE2N\') AND (num_syllables BETWEEN 10-1 AND 10+1)
+(end_rhyme_sound=\'AE0N\') AND (num_syllables BETWEEN 10-1 AND 10+1)
+(1) AND (num_syllables BETWEEN 10-1 AND 10+1)
+(end_rhyme_sound=\'AH0L\') AND (num_syllables = 10)
+(end_rhyme_sound=\'AH0L\') AND (num_syllables BETWEEN 10-1 AND 10+1)
+(end_rhyme_sound=\'AE1N\') AND (num_syllables = 10)
+(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-1 AND 10+1)
+(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-2 AND 10+2)
+(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-3 AND 10+3)
+(end_rhyme_sound=\'AE2N\') AND (num_syllables BETWEEN 10-3 AND 10+3)
+(end_rhyme_sound=\'AE2N\') AND (1)
+(end_rhyme_sound=\'AE0N\') AND (1)
+(end_rhyme_sound=\'AE0N\') AND (1)
+(end_rhyme_sound=\'AE0N\') AND (1)
+(1) AND (1)
+(end_rhyme_sound=\'AH0L\') AND (num_syllables = 10)
+(end_rhyme_sound=\'AH1L\') AND (num_syllables = 10)
+(end_rhyme_sound=\'AH2L\') AND (num_syllables = 10)
+(end_rhyme_sound=\'AH2L\') AND (num_syllables BETWEEN 10-1 AND 10+1)
+(1) AND (num_syllables BETWEEN 10-1 AND 10+1)
+(end_rhyme_sound=\'AE1N\') AND (num_syllables = 10)
+(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-1 AND 10+1)
+(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-2 AND 10+2)
+(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-3 AND 10+3)
+(end_rhyme_sound=\'AE2N\') AND (num_syllables BETWEEN 10-3 AND 10+3)
+(end_rhyme_sound=\'AE0N\') AND (num_syllables BETWEEN 10-3 AND 10+3)
+(1) AND (num_syllables BETWEEN 10-3 AND 10+3)
+
+Your illustrious ancestor?
+First: The Library exists ab aeterno
+Let heaven exist, though my place be in hell
+The consequences were incalculable
+Philosophic controversy usurps a good part of the novel
+Wordlessly, I returned the sheet
+and I hung up the receiver
+\end{verbatim}
+
+The algorithm struggled to find good candidate sentences given the size of the
+corpus--this was intentional to show how rules weaken. Note that the trivial
+rule manifests itself as simple `(1)', a clause sufficient to select any
+sentence.
+
 \subsubsection{Implemented Rules}
+At publication, I have implemented the following rules:
+\onehalfspacing
+\begin{enumerate}
+\item Rhyme: Match the rhyme sound of the last word of a sentence
+\item Syllable: Match the syllable count of a sentence
+\item Keyword: Match lines that either contain a given word (exact) or are near such a line (fuzzy)
+\end{enumerate}
+\doublespacing
+
 \subsection{Final Composition}
 \section{Results}
 \subsection{Selected outputs}
