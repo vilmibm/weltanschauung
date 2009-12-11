@@ -12,7 +12,7 @@
 \setlength{\textheight}{9.5in}
 \setlength{\topmargin}{-1in}
 
-\title{Poem Generation from Large Corpora through Reappropriation}
+\title{Poem Generation from Large Corpora Through Reappropriation}
 \author{Nathaniel K Smith}
 
 \begin{document}
@@ -240,8 +240,10 @@ which is satisfied by any sentence.
 \subsection{Technical Implementation}
 The tools involved in the implementation of this algorithm are Perl 5.10 and
 SQLite3. Perl was chosen due to its rich Lingua::EN repository which contained
-many modules for parsing, splicing, and cleaning up English text. SQLite3 was
-chosen for its speed, in-RAM database feature and portability.
+many modules for parsing, splicing, and cleaning up English text. Used in the
+implementation of this algorithm were the CPAN modules Splitter, Phoneme, and
+Syllable of the Lingua::EN namespace. SQLite3 was chosen for its speed, in-RAM
+database feature and portability.
 
 Despite initial concerns about the ability of an interpreted language to
 process enough text in a short time, the implementation ended up with favorable
@@ -252,6 +254,10 @@ it into a SQLite3 database took 2.5 hours.  The former benchmark indicates that
 the poem generation code will scale for larger corpora, but the latter shows
 that refactoring or rewriting will be necessary to support multimillion line
 corpora.
+
+All code developed for this project is licensed under version 2.0 of the
+Artistic License and freely available at
+http://github.com/nathanielksmith/weltanschauung.
 
 \subsection{Corpus Acquisition}
 A key component of this approach is the presence of a large corpus. Years ago,
@@ -441,7 +447,7 @@ rule manifests itself as simple `(1)', a clause sufficient to select any
 sentence.
 
 \subsubsection{Implemented Rules}
-At publication, I have implemented the following rules:
+At publication, the following rules are implemented:
 \onehalfspacing
 \begin{enumerate}
 \item Rhyme: Match the rhyme sound of the last word of a sentence
@@ -450,9 +456,13 @@ At publication, I have implemented the following rules:
 \end{enumerate}
 \doublespacing
 
-\subsection{Final Composition}
 \section{Results}
-\subsection{Selected outputs}
+\subsection{Selected Outputs}
+\subsubsection{Haiku}
+\subsubsection{Sonnet}
+\subsubsection{Limerick}
+\subsubsection{Sestina}
+\subsubsection{Miscellaneous}
 \subsection{Defense of Technique}
 
 \subsubsection{Semantic Consistency}
@@ -483,7 +493,33 @@ media--prose sentences--while the computer acts as the artist. In this case,
 however, the computer is more like an artist of reappropriation like a DJ,
 collage artist, or cut-up author.
 
+\subsubsection{Conclusion}
+Thus, I argue that this approach is a versatile one that employs the computer in a
+necessary and novel way to produce interesting poetry. The rules system is
+sufficiently `hands-off' such that a human merely suggests the final poetic
+structure of a piece while the computer performs a task that is humanly
+impossible. Thus, the `Why?' of this approach is: new, creative work is
+discovered and enjoyed with the necessary help of a computer.
+
 \section{Further Research}
+\subsubsection{Missing Pieces}
+The most glaring lacking in this implementation is the absence of a scansion
+rule. Without this rule, most major poetic forms cannot be approximated.
+
+Second most importantly, I need to develop a faster way of acquiring and
+profiling large corpora. It seems that refactoring and parallelizing parts of
+the existing code would be the most expedient way to accomplish this.
+
+Finally, the resulting pieces need to be cleaned up in some automated
+way--stray punctuation should be corrected, as should erroneous characters that
+survived the profiling process (like newlines).
+\subsubsection{Applications}
+The interestingness of this approach's output depends largely on its corpus. Some areas which would prove fruitful would be:
+\onehalfspacing
+\begin{enumerate}
+\item Specific selections of multiple poets
+\end{enumerate}
+\doublespacing
 
 \bibliography{paper}
 \bibliographystyle{apa}
