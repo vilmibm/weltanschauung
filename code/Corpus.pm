@@ -89,7 +89,7 @@ sub insert_into_db {
         print "read $read bytes...\n";
         # normalize step
         $buffer =~ s/^(.*)[^.]$/$1\./;
-        $buffer =~ s/\n//s;
+        $buffer =~ s/\n//gs;
         $sentences = get_sentences($buffer);
         for $sentence ( @$sentences ) {
             # profile step
