@@ -32,17 +32,14 @@ sub get_clause {
         }
         when ([1..11]) {
             my $range = 12 - $_;
-            # XXX In no universe will this work.
-            return "(
+            my $select = join ',', map { "line_no+$_, line_no-$_" } (1..$range);
+            my $sql = "(
                 line_no IN (
-                    SELECT line_no
-                        FROM lines
-                        WHERE 
-                            line_no BETWEEN line_no+$range AND line_no-$range 
-                        AND sentence LIKE '% $keyword %'
-                    )
+                    SELECT $select
+                    FROM lines
+                    WHERE sentence LIKE '% $keyword %'
                 )
-            ";
+            )"    
         }
         when (0) { return '(1)' }
     }
