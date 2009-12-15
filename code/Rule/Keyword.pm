@@ -6,6 +6,8 @@ use warnings;
 
 use feature 'switch';
 
+use List::Util 'shuffle';
+
 sub new {
     my $class = shift;
     my $self  = {};
@@ -32,14 +34,14 @@ sub get_clause {
         }
         when ([1..11]) {
             my $range = 12 - $_;
-            my $select = join ',', map { "line_no+$_, line_no-$_" } (1..$range);
-            return "(
-                line_no IN (
-                    SELECT $select
-                    FROM lines
-                    WHERE sentence LIKE '% $keyword %'
-                )
-            )"    
+            my @conds;
+            push @conds, 
+                "line_no IN (SELECT line_no+$_ FROM lines WHERE sentence LIKE '% $keyword %')
+                 OR line_no IN (SELECT line_no-$_ FROM lines WHERE sentence LIKE '% $keyword %')
+                " for (1..$range);
+            shuffle @conds;
+            return '(' . join(' OR ', @conds) . ')';
+            
         }
         when (0) { return '(1)' }
     }
