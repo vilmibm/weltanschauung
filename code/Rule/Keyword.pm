@@ -33,7 +33,7 @@ sub get_clause {
         when ([1..11]) {
             my $range = 12 - $_;
             my $select = join ',', map { "line_no+$_, line_no-$_" } (1..$range);
-            my $sql = "(
+            return "(
                 line_no IN (
                     SELECT $select
                     FROM lines
