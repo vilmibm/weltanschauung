@@ -5,7 +5,6 @@
 \usepackage{algorithmic}
 \usepackage{setspace} 
 \usepackage{url}
-\usepackage{hyperref}
 
 % Set Margins
 \setlength{\textwidth}{6.5in}
@@ -256,7 +255,8 @@ took between .2 and .4 seconds. Parsing a 1 million line corpus and inserting
 it into a SQLite3 database took 2.5 hours. The former benchmark indicates that
 the poem generation code will scale for larger corpora, but the latter shows
 that refactoring or rewriting will be necessary to support multimillion line
-corpora.
+corpora. All of this work was performed on a modern laptop running Ubuntu with
+a consumer grade dual-core CPU and 1 gigabyte of RAM.
 
 It is important to note that there are numerous opportunities for parallelism
 in this project that could be included in future refactors. Corpus acquisition
@@ -329,46 +329,6 @@ output are parsed into a list of lists of Rule objects that are capable of
 weakening themselves and producing SQL clauses to be used in a SELECT
 statement.
 
-\subsubsection{Input to Rules Translation}
-In the current implementation, output guidelines are specified through command
-line arguments to a main driver program. With the exception of the length rule,
-each rule specific on the command line describes a scheme--in other words, a
-layout for each line of the poem.
-
-For example, given the string ABABCC, the program will first pick a random
-sound for each unique letter in the scheme and later use them to select
-sentences with that rhyme sound for each line's corresponding rhyme label
-modulo the number of lines. Thus, a 12 line poem with the scheme ABABCC would
-produce a poem with ABABCCABABCC rhymes.
-
-Similarly, one expresses syllable schemes using a comma separated list of
-syllable counts. To specify a Haiku, one would input a length of 3 and a
-syllable scheme of ``5,7,5".
-
-Once each input rule is parsed, a list of Rule objects for each line of the
-poem is created. Each rule object is a subclass of a basic Rule
-class and is initialized with the parameters set on the command line.
-
-% XXX FIG: Rule Interface
-
-As an example, the command line arguments:
-\begin{verbatim}
---rhyme=``AB" --length=``5,10" --syllables=``8" --fuzzy\_keyword=``turntable,alphabet"
-\end{verbatim}
-would translate to the following data structure (with each rule object
-represented by the resulting constructor call) after selecting `AO1' as the
-rhyme sound for A and `EH1' as the rhyme sound for B:
-
-\begin{verbatim}
-(
-    (Rule::Rhyme(`A01'), Rule::Syllable(5), Rule::Keyword(`turntable', `fuzzy')),
-    (Rule::Rhyme(`EH1'), Rule::Syllable(10), Rule::Keyword(`alphabet', `fuzzy')),
-    (Rule::Rhyme(`A01'), Rule::Syllable(5), Rule::Keyword(`turntable', `fuzzy')),
-    (Rule::Rhyme(`EH1'), Rule::Syllable(10), Rule::Keyword(`alphabet', `fuzzy')),
-    (Rule::Rhyme(`A01'), Rule::Syllable(5), Rule::Keyword(`turntable', `fuzzy'))
-)
-\end{verbatim}
-
 \subsubsection{Rule Class}
 Though not included in the algorithm's original design, it became clear that
 the only way to properly organize the rule code was through an object oriented
@@ -396,9 +356,10 @@ Once weakened, a rule object's get\_clause function returns SQL modified to be
 more general. Instead of giving weights to any kind of rule, each rule object
 in the rule set for a given line of a poem is equally likely to be randomly
 weakened. To illustrate the weakening process, here is a trace of the SQL
-generated for each line of a sample 10-line AB scheme poem using a small (600
+generated for the first line of a sample 10-line AB scheme poem using a small (600
 sentence) corpus:
 
+% XXX SLIDE
 \begin{verbatim}
 SELECT sentence FROM lines WHERE...
 
@@ -409,48 +370,8 @@ SELECT sentence FROM lines WHERE...
 (end_rhyme_sound=\'AE0N\')  AND  (num_syllables BETWEEN 10-2 AND 10+2)
 (end_rhyme_sound=\'AE0N\')  AND  (num_syllables BETWEEN 10-3 AND 10+3)
 (1) AND (num_syllables BETWEEN 10-3 AND 10+3)
-(end_rhyme_sound=\'AH0L\') AND (num_syllables = 10)
-(end_rhyme_sound=\'AH1L\') AND (num_syllables = 10)
-(end_rhyme_sound=\'AH1L\') AND (num_syllables BETWEEN 10-1 AND 10+1)
-(end_rhyme_sound=\'AH2L\') AND (num_syllables BETWEEN 10-1 AND 10+1)
-(1) AND (num_syllables BETWEEN 10-1 AND 10+1)
-(end_rhyme_sound=\'AE1N\') AND (num_syllables = 10)
-(end_rhyme_sound=\'AE2N\') AND (num_syllables = 10)
-(end_rhyme_sound=\'AE2N\') AND (num_syllables BETWEEN 10-1 AND 10+1)
-(end_rhyme_sound=\'AE0N\') AND (num_syllables BETWEEN 10-1 AND 10+1)
-(1) AND (num_syllables BETWEEN 10-1 AND 10+1)
-(end_rhyme_sound=\'AH0L\') AND (num_syllables = 10)
-(end_rhyme_sound=\'AH0L\') AND (num_syllables BETWEEN 10-1 AND 10+1)
-(end_rhyme_sound=\'AE1N\') AND (num_syllables = 10)
-(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-1 AND 10+1)
-(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-2 AND 10+2)
-(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-3 AND 10+3)
-(end_rhyme_sound=\'AE2N\') AND (num_syllables BETWEEN 10-3 AND 10+3)
-(end_rhyme_sound=\'AE2N\') AND (1)
-(end_rhyme_sound=\'AE0N\') AND (1)
-(end_rhyme_sound=\'AE0N\') AND (1)
-(end_rhyme_sound=\'AE0N\') AND (1)
-(1) AND (1)
-(end_rhyme_sound=\'AH0L\') AND (num_syllables = 10)
-(end_rhyme_sound=\'AH1L\') AND (num_syllables = 10)
-(end_rhyme_sound=\'AH2L\') AND (num_syllables = 10)
-(end_rhyme_sound=\'AH2L\') AND (num_syllables BETWEEN 10-1 AND 10+1)
-(1) AND (num_syllables BETWEEN 10-1 AND 10+1)
-(end_rhyme_sound=\'AE1N\') AND (num_syllables = 10)
-(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-1 AND 10+1)
-(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-2 AND 10+2)
-(end_rhyme_sound=\'AE1N\') AND (num_syllables BETWEEN 10-3 AND 10+3)
-(end_rhyme_sound=\'AE2N\') AND (num_syllables BETWEEN 10-3 AND 10+3)
-(end_rhyme_sound=\'AE0N\') AND (num_syllables BETWEEN 10-3 AND 10+3)
-(1) AND (num_syllables BETWEEN 10-3 AND 10+3)
 
 Your illustrious ancestor?
-First: The Library exists ab aeterno
-Let heaven exist, though my place be in hell
-The consequences were incalculable
-Philosophic controversy usurps a good part of the novel
-Wordlessly, I returned the sheet
-and I hung up the receiver
 \end{verbatim}
 
 The algorithm struggled to find good candidate sentences given the size of the
@@ -458,9 +379,51 @@ corpus--this was intentional to show how rules weaken. Note that the trivial
 rule manifests itself as simple `(1)', a clause sufficient to select any
 sentence.
 
+\subsubsection{Input to Rules Translation}
+In the current implementation, output guidelines are specified through command
+line arguments to a main driver program. With the exception of the length rule,
+each rule specific on the command line describes a scheme--in other words, a
+layout for each line of the poem.
+
+For example, given the string ABABCC, the program will first pick a random
+sound for each unique letter in the scheme and later use them to select
+sentences with that rhyme sound for each line's corresponding rhyme label
+modulo the number of lines. Thus, a 12 line poem with the scheme ABABCC would
+produce a poem with ABABCCABABCC rhymes.
+
+Similarly, one expresses syllable schemes using a comma separated list of
+syllable counts. To specify a Haiku, one would input a length of 3 and a
+syllable scheme of ``5,7,5''.
+
+Once each input rule is parsed, a list of Rule objects for each line of the
+poem is created. 
+
+Example command-line input and its resulting data structure and SQL is shown in
+figure XXX.
+
+% XXX input, list, SQL slide
+As an example, the command line arguments:
+\begin{verbatim}
+--rhyme=``AB'' --length=``10'' --syllables=``6,8'' --fuzzy\_keyword=``turntable,alphabet''
+\end{verbatim}
+would translate to the following data structure (with each rule object
+represented by the resulting constructor call) after selecting `AO1' as the
+rhyme sound for A and `EH1' as the rhyme sound for B:
+
+\begin{verbatim}
+(
+    (Rule::Rhyme(`A01'), Rule::Syllable(5), Rule::Keyword(`turntable', `fuzzy')),
+    (Rule::Rhyme(`EH1'), Rule::Syllable(10), Rule::Keyword(`alphabet', `fuzzy')),
+    (Rule::Rhyme(`A01'), Rule::Syllable(5), Rule::Keyword(`turntable', `fuzzy')),
+    (Rule::Rhyme(`EH1'), Rule::Syllable(10), Rule::Keyword(`alphabet', `fuzzy')),
+    (Rule::Rhyme(`A01'), Rule::Syllable(5), Rule::Keyword(`turntable', `fuzzy'))
+)
+\end{verbatim}
+
+
 \subsubsection{Implemented Rules}
 At publication, the following rules are implemented:
-\onehalfspacing
+\singlespacing
 \begin{enumerate}
 \item Rhyme: Match the rhyme sound of the last word of a sentence
 \item Syllable: Match the syllable count of a sentence
@@ -470,15 +433,25 @@ At publication, the following rules are implemented:
 
 \section{Results}
 \subsection{Selected Outputs}
+The following examples were selected from several runs of the algorithm against
+the 433,850 sentence corpus from Project Gutenberg. Approximate ``signal to
+noise'' ratios are listed for each category of output. These ratios are skewed
+by the author's bias, as they represent the number of poems I selected as
+``interesting'' versus the number of poems produced which were too disjointed or
+aesthetically unpleasing. All poems received minimal editing; only stray newlines
+were removed.
+
 \subsubsection{Couplet}
+These samples were generated with the input:
+\begin{verbatim}
+--rhyme=``A'' --length=``2'' --syllables=``10''
+\end{verbatim}
+After 100 runs, the signal-to-noise ratio for these works averaged 46\%. They
+were run without a keyword chosen to maximize the number of sentences sampled.
+\singlespacing
 \begin{verbatim}
 "You havent seen him, have you? 
 "People seldom do.
-\end{verbatim}
-
-\begin{verbatim}
-The mate was making an out-of-town call!
-"If you dont look out your horse may fall."
 \end{verbatim}
 
 \begin{verbatim}
@@ -487,9 +460,20 @@ He guessed a great deal of the truth.
 \end{verbatim}
 
 \begin{verbatim}
-I wasnt used to them in those days.
-They produced death in about two days.
+"We cant limit procreation by law.
+In short there was no end to what he saw.
 \end{verbatim}
+
+\begin{verbatim}
+"Let none falter who thinks he is right."
+They saw a truly marvelous sight.
+\end{verbatim}
+
+\begin{verbatim}
+Blumpo dances a breakdown for joy.
+"Oh, you tell it," grumbled the fat boy.
+\end{verbatim}
+
 \subsubsection{Haiku}
 \begin{verbatim}
 Harrys son nodded.
@@ -548,7 +532,7 @@ Ah!
 By using one or more topics as rules in the input to the software one can
 topically flavor the output without restricting it. Sentences relevant to the
 selected topic will be used to produce the final piece. The reader should be
-able to get a sense of what each produced poem is "about." It is important to
+able to get a sense of what each produced poem is ``about.'' It is important to
 note that this semantic consistency does not undermine juxtaposition, one of
 the important aspects of computer poetry \cite{Hart96}. The output will still
 contain the often jarring combination of seemingly otherwise unrelated phrases
@@ -581,27 +565,49 @@ impossible. Thus, the `Why?' of this approach is: new, creative work is
 discovered and enjoyed with the necessary help of a computer.
 
 \section{Further Research}
-\subsubsection{Missing Pieces}
+\subsection{Missing Pieces}
 The most glaring lacking in this implementation is the absence of a scansion
-rule. Without this rule, most major poetic forms cannot be approximated.
+rule. Without this rule, most major poetic forms cannot be approximated. A
+scansion engine\cite{scandroid} licensed under the GPL exists in the Python
+language and could be adapted to work with the Perl source of this project.
+Similarly, the current definition of rhyme used in this project is na\"{i}ve;
+future iterations of this work will account for the many different kinds of
+rhymes possible in a given poem (eg, syllabic, imperfect, or slant).
 
-Second most importantly, I need to develop a faster way of acquiring and
+Further, I need to develop a faster way of acquiring and
 profiling large corpora. It seems that refactoring and parallelizing parts of
 the existing code would be the most expedient way to accomplish this.
+Parallelization can also improve the production speed of longer poems with
+several rules per line.
 
 Finally, the resulting pieces need to be cleaned up in some automated
 way--stray punctuation should be corrected, as should erroneous characters that
-survived the profiling process (like newlines).
-\subsubsection{Applications}
-The interestingness of this approach's output depends largely on its corpus. Some areas which would prove fruitful would be:
-\onehalfspacing
-\begin{enumerate}
-\item Specific selections of multiple poets (a `mix' of Charles Baudelaire and Robert Frost, for example)
-\item Newspaper articles from sources with vastly different political agendas
-\item Status updates from a specific social network
-\doublespacing
-\end{enumerate}
-\doublespacing
+survived the profiling process (like newlines). Apostrophes, too, need to be
+intelligently handled as for now they are just stripped out. As a part of this
+project a Lingua::EN::Unapostrophe module was designed which would strip
+possessive apostrophes but expand apostrophes representing word
+contractions--from don't to do not, for example--but at time of publication the
+design has not been implemented.
+
+\subsection{Applications}
+The quality of this approach's output depends largely on its corpus. Some areas
+which would prove fruitful would be. One possible ``interesting'' corpus is a
+mixture of the complete works of two poets, potentially radically different, to
+create surprising combinations. Combining Plath and Whitman, for example, could
+illustrate the often oscillating moods of self fulfillment and despair.
+Similarly, news content from sources with different political agendas (eg, the
+Huffington Post and the Drudge Report) could be combined to reveal excesses of
+hyperbole on both sides of a political debate.
+
+A more subtle application of this software is a kind of fuzzy data mining for
+sociological research. The works produced by corpora containing every status
+update of every friend of social network users from different socioeconomic
+strata could elucidate differences in interests, literacy levels, and bias
+between classes.
+
+Finally, the entire Internet is a potential corpus; works
+produced would seem infinitely diverse and could describe the zeitgeist of the
+Internet's billions of users.
 
 \bibliography{paper}
 \bibliographystyle{apa}
