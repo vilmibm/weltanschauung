@@ -1,9 +1,11 @@
 \documentclass[10pt]{article}
+\raggedright
+\parindent=1.5em
 \usepackage{moreverb}
 \usepackage{algorithmic}
 \usepackage{setspace} 
 \usepackage{url}
-\doublespacing
+\usepackage{hyperref}
 
 % Set Margins
 \setlength{\textwidth}{6.5in}
@@ -12,7 +14,7 @@
 \setlength{\textheight}{9.5in}
 \setlength{\topmargin}{-1in}
 
-\title{Poem Generation from Large Corpora Through Reappropriation}
+\title{Automated Cut-Up Poem Generation from Large Corpora}
 \author{Nathaniel K Smith}
 
 \begin{document}
@@ -32,14 +34,17 @@ algorithm fills both a technical and creative gap within the existing computer
 poetry landscape. Finally, opportunities for further research are discussed.
 \end{abstract}
 
+\tableofcontents
+\doublespacing
+
 \section{Introduction}
 Innovation in the field of computer generated poetry has been sluggish at best,
 most likely because of the historically small intersection between poets and
 programmers \cite{Hart96}. It seems that most attempts made at `good' computer
-poetry (A metric which is arguably even less measurable than in `good' poetry)
-often fall prey to one of two problems: one, leaving too much to the computer,
-thus cutting out human spontanaeity and creativity or two, treating the
-computer as a bland random number generator and using an over-abundance of
+poetry (A metric which is arguably even less measurable than `good' poetry on
+its own) often fall prey to one of two problems: one, leaving too much to the
+computer, thus cutting out human spontanaeity and creativity or two, treating
+the computer as a bland random number generator and using an over-abundance of
 human-prepared content.
 
 I posit that there is a way to synthesize these two extremes by exploiting
@@ -63,55 +68,51 @@ poetry landscape. Finally, opportunities for further research are discussed.
 \subsection{Background}
 \subsubsection{Two Categories}
 My research into existing work in the field of computer poetry revealed two
-general categories of techniques; one, I called \emp{Generative} and the other,
-\emp{Templatized}. The former category relies on some input text and an
+general categories of techniques; one, I called \emp{generative} and the other,
+\emp{templatized}. The former category relies on some input text and an
 algorithm to produce new works, while the latter relies on a pre-defined
 grammatical (or semantic) template to produce work from scratch (in other
 words, without any input text).  
 
-To adapt the summation found in \cite{Hart96}, Templatized computer poetry has this flow:
-\begin{center}
-\begin{boxed}
-PROGRAM, TEMPLATE $\rightarrow$ TEXT
-\end{boxed}
-\end{center}
-while Generative computer poetry looks like this:
-\begin{center}
-\begin{boxed}
-TEXT $\rightarrow$ PROGRAM $\rightarrow$ TEXT
-\end{boxed}
-\end{center}
+To adapt the summation found in \cite{Hart96}, templatized computer poetry has
+this general flow: a human programmer creates some kind of initial structure
+(either semantic or grammatical) and uses it along with software to produce a
+work. A generative approach to computer poetry, on the other hand, would
+provide a program that acts as a filter of sorts that takes some initial
+text--not necessarily written by the programmer designing the program--and
+converts it into a new work. 
 
 \subsubsection{Existing Projects}
-Early attempts at computer poetry were Templatized techniques. The earliest
+Early attempts at computer poetry were templatized techniques. The earliest
 documented approach was Auto-Beatnik, which churned out randomly rendered poems
-using grammatical structures and a vocabulary.  It was not until 1984 that
-another serious attempt at poetry generation was publicised with the release of
-a work by the program RACTER called \emph{The Policeman's Beard is
-Half-Constructed}. At 66 pages, \emph{Policeman's Beard} was a much larger
-effort than the handful of short poems output by Auto-Beatnik. However, the
-generation process was essentially the same idea: the program called upon
-built-in grammatical templates and a large vocabulary of english words
-\cite{Chamb84}. Despite the 22 years between these two projects, they both
-were, at their core, automated versions of the popular game Mad Libs.
+using grammatical structures and a vocabulary of english words (nouns, verbs,
+pronouns, and so forth).  It was not until 1984 that another serious attempt at
+poetry generation was publicised with the release of a work by the program
+RACTER called \emph{The Policeman's Beard is Half-Constructed}. At 66 pages,
+\emph{Policeman's Beard} was a much larger effort than the handful of short
+poems output by Auto-Beatnik. However, the generation process was essentially
+the same idea: the program called upon built-in grammatical templates and a
+large vocabulary of english words \cite{Chamb84}. Despite the 22 years between
+these two projects, they both were, at their core, automated versions of the
+popular game Mad Libs.
 
-A more recent Templatized technique is detailed in \cite{Manurung00} and
+A more recent templatized technique is detailed in \cite{Manurung00} and
 \cite{Manurung03}. This technique stochastically evolves a poem from a simple
 phrase or set of simple phrases into an interesting poem using a set of
 evaluation functions.
 
-This approach is an even further departure from RACTER than Prose. The
-technique, packaged in software named McGonagall, relies on the manipulation of
-grammatical information using a Lexicalized Tree Adjoining Grammar (LTAG). The
-LTAG is a derivation tree; in other words, it itself does not describe the
-phrase structure of a sentence. Instead, it describes operations performed on a
-set of phrases. Each node of the LTAG is an elementary tree describing some
-phrase structure and each edge labels the location at which a child node should
-be inserted into its parent node. These LTAG structures serve as a kind of
+This approach is a wide ranging departure from RACTER. The technique, packaged
+in software named McGonagall, relies on the manipulation of grammatical
+information using a Lexicalized Tree Adjoining Grammar (LTAG). The LTAG is a
+derivation tree; in other words, it itself does not describe the phrase
+structure of a sentence. Instead, it describes operations performed on a set of
+phrases. Each node of the LTAG is an elementary tree describing some phrase
+structure and each edge labels the location at which a child node should be
+inserted into its parent node. These LTAG structures serve as a kind of
 template from which poems are derived. Potential solutions are evolved using
 the LTAGs and evaluated for things like meter, rhyme, and semantics.
 
-An early and basic Generative approach is the Travesty Engine discussed in
+An early and basic generative approach is the Travesty Engine discussed in
 \cite{Hart96}. This technique accepted an input text and reorganized it using a
 Markov chain (a random generative process in which future states are selected
 based only on the present state of the generation). Given some $n$, the
@@ -143,32 +144,32 @@ three random keywords originally picked.
 
 Another approach similar to my technique is the case based reasoning technique
 developed in \cite{Gervas01}. This approach accepts prose sentences to be
-converted to poetry. Largely, the process is Generative, making grammatical
+converted to poetry. Largely, the process is generative, making grammatical
 changes to the input sentence as well as word substitutions. The target output
 is specified by some existing stanza of the desired form (ie, a haiku). An
 important part of the process, however, is a vocabulary of words that may be
 substituted into the original prose to achieve the desired poetic structure,
-making this approach a combination of Templatized and Generative techniques. A
+making this approach a combination of templatized and generative techniques. A
 user must supply this vocabulary for each poem desired.
 
 \subsection{Analysis}
 Throughout the course of this research it became evident that a common problem in
-computer poetry was simply the question: Why? Templatized techniques tended to
+computer poetry was simply the question: Why? templatized techniques tended to
 rely almost exclusively on the human programmers designing the poetry
 generation software; it seemed like the computer was little more than a set of
-dice. In \cite{Manurung03}, where the Templatized technique is taken to an
+dice. In \cite{Manurung03}, where the templatized technique is taken to an
 extreme, the semantic scope of the produced work is still strictly limited to
 what humans provide in the LTAG collection. It seems like computer poetry like
 this isn't contributing anything to the field that a human couldn't already do
 by hand.
 
-The CBR approach suffers from similar problems despite being a partially Generative technique.
+The CBR approach suffers from similar problems despite being a partially generative technique.
 A large part of the creativity of the system depends on the words chosen for
 the vocabulary used, meaning that a human must premeditate the content of
 produced poems. Similarly, a human user must select the poetic verses used to
 compare potential outputs to when generating a poem.
 
-The question is easier to answer for Generative techniques. The Travesty
+The question is easier to answer for generative techniques. The Travesty
 Engine, for example, produces new arrangements of pieces that humans may never
 think to produce. It can reveal new meaning in an existing piece through purely
 aleatoric means. Similarly, in the VSM Haiku generator, the produced poetry can
@@ -181,15 +182,16 @@ example, the final Haiku bear too little resemblance to their source material
 to really articulate any kind of underlying meaning to the reader.
 
 \section{Directed Cut-up Technique}
-Thus, I present a new Generative technique inspired by the work of the poet and
+Thus, I present a new generative technique inspired by the work of the poet and
 author William Burroughs. This technique exploits the diversity and large
 number of sentences found in large corpora--for example, Wikipedia, the online
 articles of a newspaper, or online public domain books--by scanning the
 sentences within them, profiling them, and then using them to populate a poem
 based on rules input by a human user. Thus, the technique \emph{cuts up}, like
 Burroughs \cite{wikiCutup}, some given corpus in order to produce a poetic
-result. I argue that this technique produces interesting work, and present
-several features of the resulting pieces that support this.
+result. I argue that, given a large and varied enough corpus, this technique
+produces interesting work, and present several features of the resulting pieces
+that support this.
 
 \subsection{Explication of Algorithm}
 The technique is driven by a short algorithm  supported by several modules. It
@@ -238,26 +240,34 @@ which is satisfied by any sentence.
 \doublespacing
 
 \subsection{Technical Implementation}
-The tools involved in the implementation of this algorithm are Perl 5.10 and
-SQLite3. Perl was chosen due to its rich Lingua::EN repository which contained
-many modules for parsing, splicing, and cleaning up English text. Used in the
-implementation of this algorithm were the CPAN modules Splitter, Phoneme, and
-Syllable of the Lingua::EN namespace. SQLite3 was chosen for its speed, in-RAM
-database feature and portability.
+The tools involved in the implementation of this algorithm are Perl
+5.10\cite{perl} and SQLite3\cite{sqlite3}. Perl was chosen due to its rich Lingua::EN
+repository which contains many modules for parsing, splicing, and cleaning up
+English text. Used in the implementation of this algorithm were the CPAN
+modules Splitter\cite{splitter}, Phoneme\cite{phoneme}, and
+Syllable\cite{syllable} of the Lingua::EN namespace. SQLite3 was
+chosen for its speed, in-RAM database feature and portability.
 
 Despite initial concerns about the ability of an interpreted language to
 process enough text in a short time, the implementation ended up with favorable
 benchmarks. Producing 10 line poems with an AB rhyme scheme and 10 syllables
 per line from a SQLite3 database containing .4 million sentences consistently
 took between .2 and .4 seconds. Parsing a 1 million line corpus and inserting
-it into a SQLite3 database took 2.5 hours.  The former benchmark indicates that
+it into a SQLite3 database took 2.5 hours. The former benchmark indicates that
 the poem generation code will scale for larger corpora, but the latter shows
 that refactoring or rewriting will be necessary to support multimillion line
 corpora.
 
+It is important to note that there are numerous opportunities for parallelism
+in this project that could be included in future refactors. Corpus acquisition
+and poem production are both embarassingly parallel operations; content can be
+downloaded asynchronously in the former and in the latter, a process can be
+spawned for each line of a poem-in-progress as no single line depends on any
+other line.
+
 All code developed for this project is licensed under version 2.0 of the
 Artistic License and freely available at
-http://github.com/nathanielksmith/weltanschauung.
+\url{http://github.com/nathanielksmith/weltanschauung}.
 
 \subsection{Corpus Acquisition}
 A key component of this approach is the presence of a large corpus. Years ago,
@@ -276,11 +286,12 @@ profiled sentences stored in a database for use.
 
 A scrape of several thousand Wikipedia pages was attempted, but the content
 proved to be too diverse (in terms of encoding and structure) to be parsed
-without lots of additional overhead.
+without lots of additional overhead. The primary issues were UTF-8 encoding and
+the vagaries of sidebars, tables of contents, and headers.
 
 \subsection{Corpus Processing}
 For each sentence found in the input corpus, the following details are stored in a database:
-\onehalfspacing
+\singlespacing
 \begin{enumerate}
 \item line number
 \item rhyme sound
@@ -307,7 +318,7 @@ Unfortunately, relying on the CMU dictionary means that there are occasionally
 words which are not profiled in the listing. For these words, no rhyme sound is
 recorded. For syllable counting, the Perl module Lingua::EN::Syllable is fallen
 back to, which employs an intelligent vowel count technique to produce syllable
-counts with about 80\% accuracy.
+counts with about 80\% accuracy\cite{syllable}.
 
 The line number is used both as a primary key for the sentence's database
 representation as well as for determining line proximity.
@@ -330,14 +341,15 @@ sentences with that rhyme sound for each line's corresponding rhyme label
 modulo the number of lines. Thus, a 12 line poem with the scheme ABABCC would
 produce a poem with ABABCCABABCC rhymes.
 
-Similarly, one expressed syllable schemes using a comma separated list of
+Similarly, one expresses syllable schemes using a comma separated list of
 syllable counts. To specify a Haiku, one would input a length of 3 and a
 syllable scheme of ``5,7,5".
 
 Once each input rule is parsed, a list of Rule objects for each line of the
 poem is created. Each rule object is a subclass of a basic Rule
-class--supplying only a constructor and get/set functions for its weakness
-level--and is initialized with the parameters set on the command line.
+class and is initialized with the parameters set on the command line.
+
+% XXX FIG: Rule Interface
 
 As an example, the command line arguments:
 \begin{verbatim}
