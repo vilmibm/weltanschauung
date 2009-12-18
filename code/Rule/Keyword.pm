@@ -41,7 +41,6 @@ sub get_clause {
                 " for (1..$range);
             shuffle @conds;
             return '(' . join(' OR ', @conds) . ')';
-            
         }
         when (0) { return '(1)' }
     }

@@ -4,6 +4,7 @@
 \usepackage{moreverb}
 \usepackage{algorithmic}
 \usepackage{setspace} 
+\usepackage{graphicx}
 \usepackage{url}
 
 % Set Margins
@@ -194,7 +195,7 @@ that support this.
 
 \subsection{Explication of Algorithm}
 The technique is driven by a short algorithm  supported by several modules. It
-is presented in pseudo-code in figure 1. The algorithm, given some corpus $C$
+is presented in pseudo-code in figure \ref{fig:algorithm}. The algorithm, given some corpus $C$
 containing several thousands of lines of text, stores each sentence of the
 corpus in a databse with associated syllabic and phonetic information. Using
 any number of simple guidelines supplied by a user, it proceeds to construct a
@@ -239,13 +240,13 @@ which is satisfied by any sentence.
 \doublespacing
 
 \subsection{Technical Implementation}
-The tools involved in the implementation of this algorithm are Perl
-5.10\cite{perl} and SQLite3\cite{sqlite3}. Perl was chosen due to its rich Lingua::EN
-repository which contains many modules for parsing, splicing, and cleaning up
-English text. Used in the implementation of this algorithm were the CPAN
-modules Splitter\cite{splitter}, Phoneme\cite{phoneme}, and
-Syllable\cite{syllable} of the Lingua::EN namespace. SQLite3 was
-chosen for its speed, in-RAM database feature and portability.
+The tools involved in the implementation of this algorithm were Perl
+5.10\cite{perl} and SQLite3\cite{sqlite3}. Perl was chosen due to its rich
+Lingua::EN repository which contains many modules for parsing, splicing, and
+cleaning up English text. Used in the implementation of this algorithm were the
+CPAN modules Splitter\cite{splitter}, Phoneme\cite{phoneme}, and
+Syllable\cite{syllable} of the Lingua::EN namespace. SQLite3 was chosen for its
+speed, in-RAM database feature and portability.
 
 Despite initial concerns about the ability of an interpreted language to
 process enough text in a short time, the implementation ended up with favorable
@@ -398,13 +399,11 @@ syllable scheme of ``5,7,5''.
 Once each input rule is parsed, a list of Rule objects for each line of the
 poem is created. 
 
-Example command-line input and its resulting data structure and SQL is shown in
-figure XXX.
-
+\subsubsection{Example}
 % XXX input, list, SQL slide
 As an example, the command line arguments:
 \begin{verbatim}
---rhyme=``AB'' --length=``10'' --syllables=``6,8'' --fuzzy\_keyword=``turntable,alphabet''
+--rhyme="AB" --length="10" --syllables="6,8" --fuzzy\_keyword=``turntable,alphabet''
 \end{verbatim}
 would translate to the following data structure (with each rule object
 represented by the resulting constructor call) after selecting `AO1' as the
@@ -444,87 +443,84 @@ were removed.
 \subsubsection{Couplet}
 These samples were generated with the input:
 \begin{verbatim}
---rhyme=``A'' --length=``2'' --syllables=``10''
-\end{verbatim}
-After 100 runs, the signal-to-noise ratio for these works averaged 46\%. They
-were run without a keyword chosen to maximize the number of sentences sampled.
-\singlespacing
-\begin{verbatim}
-"You havent seen him, have you? 
-"People seldom do.
+--rhyme="A" --length="2" --syllables="10"
 \end{verbatim}
 
-\begin{verbatim}
-"Will I?" answered the small youth.
-He guessed a great deal of the truth.
-\end{verbatim}
+\begin{figure}[here]
+\begin{center}
+    \includegraphics[width=5.5in]{couplets.eps}
+\end{center}
+\caption{Various couplets}
+\end{figure}
 
-\begin{verbatim}
-"We cant limit procreation by law.
-In short there was no end to what he saw.
-\end{verbatim}
-
-\begin{verbatim}
-"Let none falter who thinks he is right."
-They saw a truly marvelous sight.
-\end{verbatim}
-
-\begin{verbatim}
-Blumpo dances a breakdown for joy.
-"Oh, you tell it," grumbled the fat boy.
-\end{verbatim}
+Note the accidental semantic consistency in these pieces. Not only do the lines
+often sound good together, it is easy for a reader to immediately find meaning
+and coherence in the lines.
 
 \subsubsection{Haiku}
+Classic Haiku poems are 3 lines long with a 5-7-5 syllable pattern. Due to the
+imprecise syllable counting the algorithm must often fall back on, the Haiku
+presented here are not as strictly defined. However, they have the same look
+and feel. They were generated with these guidelines:
 \begin{verbatim}
-Harrys son nodded.
-Three columns and two arches.
-GLORY MAY NOT LAST.
+--syllables="5,7,5" --length="3" 
 \end{verbatim}
 
-\begin{verbatim}
-A murderer?
-Last quarter only.
-Of what had he died?...
-\end{verbatim}
+\begin{figure}[here]
+\begin{center}
+    \includegraphics[width=5.5in]{haiku.eps}
+\end{center}
+\caption{Various Haiku}
+\label{fig:haiku}
+\end{figure}
 
-\begin{verbatim}
-Alexander said. 
-"Boys, whose animal is this?" 
-A Crazy Mans Doings.
-\end{verbatim}
+In these Haiku especially, one finds that many of the better poems are either
+funny--jarring combinations of strange phrases--or oddly poignant. Of
+particular note is the first haiku listed in \ref{fig:haiku}. One can imagine
+a family staring out over the ruins of the Acropolis and pondering the
+inevitable demise of Imperial glory.
 
-\begin{verbatim}
-"Back to your airboat. 
-"How do you know this?" 
-"Why should I?
-\end{verbatim}
-\subsubsection{Sonnet}
 \subsubsection{Limerick}
-\subsubsection{Sestina}
+Limericks are typically obscene pieces beloning largely to folk traditions. The
+algorithm was capable of producing limericks that traded obscenity for
+absurdity. The rules used to generate the following were:
+
+\begin{verbatim}
+--rhyme="AABBA" --length="5" --syllables="10,10,6,6,10"
+\end{verbatim}
+
+\begin{figure}[here]
+\begin{center}
+    \includegraphics[width=5.5in]{limericks.eps}
+\end{center}
+\caption{Various limericks}
+\label{fig:limericks}
+\end{figure}
+
+Given the line constraints it was difficult to produced topical limericks that
+didn't weaken too much. But limericks of contrary absurdity were easy to come
+by and seemed to fit the spirit of limericks anyway.
+
 \subsubsection{Miscellaneous}
-\begin{verbatim}
-The first official report sent by Governor Francisco de Sande
-    to the home government is dated June 7, 1576.
-What troops can be away out here?"
-War had brought about a great many changes.
-\end{verbatim}
 
-\begin{verbatim}
-Although the cargo was taken out, it was after it 
-    had been in the water more than one and one-half months.
-Updated editions will replace the previous one--
-    the old editions will be renamed.
-The soldiers were ordered not to allow him to place on the 
-    vessel either bed, food, or drink.
-\end{verbatim}
+These pieces were created with a variety of inputs. Some are topically
+oriented, others purely random. They were selected for their weight and
+coherence.
 
-\begin{verbatim}
-"Was it a man?" asked Frank.
-The proprietor fainted and didnt get over it for two months."
-They have their own officers and workmen, and are 
-    placed in charge of the royal officials.
-Ah!
-\end{verbatim}
+\begin{figure}[here]
+\begin{center}
+    \includegraphics[width=6.5in]{misc.eps}
+\end{center}
+\caption{Various freeform works}
+\label{fig:misc}
+\end{figure}
+
+Without syllable constraints, pieces end up with very long lines, as shown by
+the indented line continuations in \ref{fig:misc}. Such lines, though, are
+often poetic unto themselves and can work well within even a short piece. The
+first piece listed in \ref{fig:misc} was made with the fuzzy keyword ``death''
+and features a good mix of related and unrelated lines, sufficiently creating a
+tone for the whole piece.
 
 \subsection{Defense of Technique}
 
@@ -555,6 +551,13 @@ to the technique as being \emph{human mediated} as humans provide the
 media--prose sentences--while the computer acts as the artist. In this case,
 however, the computer is more like an artist of reappropriation like a DJ,
 collage artist, or cut-up author.
+
+\subsubsection{A Useful Seed}
+Computer poetry can be a useful starting point for human poets, as noted in
+\cite{Hart96}. This approach produces material that is easily reworked into a
+more coherent piece by a discerning human artist. Often, merely changing just
+one or two words in an output poem can make it match a particular scheme or
+achieve some other poetic end.
 
 \subsubsection{Conclusion}
 Thus, I argue that this approach is a versatile one that employs the computer in a
